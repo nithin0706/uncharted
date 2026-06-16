@@ -10,7 +10,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 
-//const packageRoutes = require("./routes/packageRoutes");
+const packageRoutes = require("./routes/packageRoutes");
 const destinationRoutes = require("./routes/destinationRoutes");
 
 const app = express();
@@ -27,7 +27,7 @@ mongoose
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log(err));
 // Routes
-//app.use("/api/packages", packageRoutes);
+app.use("/api/packages", packageRoutes);
 
 app.use("/api/destinations", destinationRoutes);
 
