@@ -1,2 +1,2 @@
 # uncharted
-travel and tour package paltform
+travel and tour package platform

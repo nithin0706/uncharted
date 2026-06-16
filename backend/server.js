@@ -9,8 +9,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
+
 //const packageRoutes = require("./routes/packageRoutes");
-//const destinationRoutes = require("./routes/destinationRoutes");
+const destinationRoutes = require("./routes/destinationRoutes");
 
 const app = express();
 console.log("Checking MONGO_URI:", process.env.MONGO_URI);
@@ -27,7 +28,8 @@ mongoose
   .catch((err) => console.log(err));
 // Routes
 //app.use("/api/packages", packageRoutes);
-//app.use("/api/destinations", destinationRoutes);
+
+app.use("/api/destinations", destinationRoutes);
 
 // Test Route
 app.get("/", (req, res) => {
