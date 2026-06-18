@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./../styles/Login.css";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -6,16 +7,20 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    if (!email || !password) {
+    alert("Please fill all fields");
+    return;
+  }
     console.log("Email:", email);
     console.log("Password:", password);
+    
   };
 
   return (
-    <div>
+    <div className="login-container">
       <h1>Login Page</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form className="login-form" onSubmit={handleSubmit}>
         <div>
           <label>Email</label>
           <br />
@@ -23,6 +28,7 @@ function Login() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+        
           />
         </div>
 

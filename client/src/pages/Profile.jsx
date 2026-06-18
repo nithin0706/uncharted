@@ -4,6 +4,10 @@ function Profile() {
     email: "nandana@gmail.com",
     role: "User",
   };
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    alert("Logged out");
+  };
   return (
     <div>
       <h1>Profile Page</h1>
@@ -12,7 +16,7 @@ function Profile() {
       <p>Email: {user.email}</p>
       <p>Role: {user.role}</p>
 
-      <button>Logout</button>
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 }
