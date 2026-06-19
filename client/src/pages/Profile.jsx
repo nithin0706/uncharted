@@ -1,13 +1,35 @@
+import { useEffect, useState } from "react";
+import { getProfile } from "../services/authService";
+import { useNavigate } from "react-router-dom";
+
 function Profile() {
-  const user = {
-    name: "Nandana",
-    email: "nandana@gmail.com",
-    role: "User",
-  };
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await getProfile(token);
+
+        setUser(response.data.user);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    alert("Logged out");
-  };
+  localStorage.removeItem("token");
+  navigate("/");
+};
+
+  if (!user) {
+    return <h2>Loading...</h2>;
+  }
+
   return (
     <div>
       <h1>Profile Page</h1>
