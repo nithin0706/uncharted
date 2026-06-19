@@ -39,7 +39,9 @@ const token=jwt.sign({id:user._id,role:user.role },process.env.JWT_SECRET,{expir
     }
 }
 exports.getProfile = async (req, res) => {
+    const user = await User.findById(req.user.id).select("-password");
+
     res.status(200).json({
-        user: req.user
+        user
     });
 };
