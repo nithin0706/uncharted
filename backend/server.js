@@ -14,15 +14,15 @@ const packageRoutes = require("./routes/packageRoutes");
 const destinationRoutes = require("./routes/destinationRoutes");
 
 const app = express();
-console.log("Checking MONGO_URI:", process.env.MONGO_URI);
+console.log("Checking MONGODB_URI:", process.env.MONGODB_URI);
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
 mongoose
-  .connect(process.env.MONGO_URI, {
-    dbName: "uncharted-db",
+  .connect(process.env.MONGODB_URI, {
+    dbName: "uncharted",
   })
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log(err));
@@ -36,7 +36,7 @@ app.get("/", (req, res) => {
   res.send("Uncharted Travel API Running...");
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

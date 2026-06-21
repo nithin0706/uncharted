@@ -1,17 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const {
-    createPackage,
-    getPackages,
-    getPackageById,
-    updatePackage,
-    deletePackage,
-} = require("../controllers/packageController");
+const { createPackage, getPackages, getPackageById, updatePackage, deletePackage } = require("../controllers/packageController");
+const { protect, adminOnly } = require("../middleware/authMiddleware");
 
-router.post("/", createPackage);
 router.get("/", getPackages);
 router.get("/:id", getPackageById);
-router.put("/:id", updatePackage);
-router.delete("/:id", deletePackage);
+router.post("/", protect, adminOnly, createPackage);
+router.put("/:id", protect, adminOnly, updatePackage);
+router.delete("/:id", protect, adminOnly, deletePackage);
 
 module.exports = router;
