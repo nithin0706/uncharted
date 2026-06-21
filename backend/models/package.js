@@ -41,4 +41,4 @@ const packageSchema = new mongoose.Schema({
     }],
 }, { timestamps: true });
 
-module.exports = mongoose.model("Package", packageSchema);
+module.exports = mongoose.models.Package || mongoose.model("Package", packageSchema);

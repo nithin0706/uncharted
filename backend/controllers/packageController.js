@@ -1,5 +1,5 @@
-const Package = require("../models/Package");
-const Destination = require("../models/Destination");
+const Package = require("../models/package");
+const Destination = require("../models/destination");
 
 const createPackage = async (req, res) => {
     try {
