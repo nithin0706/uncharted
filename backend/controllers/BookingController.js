@@ -3,12 +3,16 @@ const Package = require("../models/package");
 
 const createBooking = async (req, res) => {
     try {
-        const { userId, packageId, travelDate, numberOfPeople } = req.body;
+        const { packageId, travelDate, numberOfPeople } = req.body;
+
+        const userId = req.user.id;
 
         const packageExists = await Package.findById(packageId);
 
         if (!packageExists) {
-            return res.status(404).json({ message: "Package not found" });
+            return res.status(404).json({
+                message: "Package not found"
+            });
         }
 
         const booking = new Booking({
