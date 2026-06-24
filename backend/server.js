@@ -12,7 +12,7 @@ const cors = require("cors");
 
 const packageRoutes = require("./routes/packageRoutes");
 const destinationRoutes = require("./routes/destinationRoutes");
-
+const reviewRoutes = require("./routes/reviewRoutes");
 const app = express();
 console.log("Checking MONGODB_URI:", process.env.MONGODB_URI);
 // Middleware
@@ -31,6 +31,7 @@ app.use("/api/packages", packageRoutes);
 
 app.use("/api/destinations", destinationRoutes);
 
+app.use("/api/reviews", reviewRoutes);
 // Test Route
 app.get("/", (req, res) => {
   res.send("Uncharted Travel API Running...");
