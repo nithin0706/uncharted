@@ -8,12 +8,14 @@ dotenv.config();
 const express = require("express");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
+const travelBuddyRoutes = require("./routes/travelBuddyRoutes");
 
 connectDB();
 
 const app = express();
 app.use(express.json());
 app.use("/api/auth", authRoutes);
+app.use("/api/buddies", travelBuddyRoutes);
 app.get("/", (req, res) => { res.send("API is running..."); });
 
 const PORT = process.env.PORT || 5000;
