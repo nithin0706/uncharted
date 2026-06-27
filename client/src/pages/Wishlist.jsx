@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import WishlistCard from "../components/WishlistCard";
-import { getWishlist } from "../services/wishlistService";
+import {
+  getWishlist,
+  removeWishlistItem,
+} from "../services/wishlistService";
 
 function Wishlist() {
  
@@ -29,14 +32,27 @@ useEffect(() => {
 
     const response = await getWishlist(token);
 
-    console.log(response.data);
+    setWishlist(response.data);
 };
 
     fetchWishlist();
 }, []);
-    const removeFromWishlist = (id) => {
-        setWishlist(wishlist.filter((item) => item.id !== id));
-    };
+    const removeFromWishlist = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    await removeWishlistItem(id, token);
+
+    setWishlist(
+      wishlist.filter((item) => item._id !== id)
+    );
+
+    console.log("Removed successfully");
+  } catch (error) {
+    console.error(error);
+    alert("Failed to remove item");
+  }
+};
 
   return (
     <div>
