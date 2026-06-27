@@ -1,8 +1,10 @@
 import { loginUser } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "./../styles/Login.css";
 
 function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -23,6 +25,7 @@ function Login() {
     localStorage.setItem("token", response.data.token);
     console.log(response.data);
     alert("Login successful");
+    navigate("/packages");
   } catch (error) {
     console.error(error.response?.data);
     alert("Login failed");
