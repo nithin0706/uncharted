@@ -6,6 +6,8 @@ import Profile from "./pages/Profile";
 import DestinationList from "./pages/DestinationList";
 import DestinationDetail from "./pages/DestinationDetail";
 import Navbar from "./components/Navbar";
+import PackageComparison from "./pages/PackageComparison";
+
 
 function App() {
   return (
@@ -18,6 +20,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/destinations" element={<DestinationList/>} />
         <Route path="/destinations/:id" element={<DestinationDetail/>} />
+        <Route path="/compare" element={<PackageComparison />} />
       </Routes>
      
     </BrowserRouter>
