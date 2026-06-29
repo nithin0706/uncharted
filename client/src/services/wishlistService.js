@@ -20,3 +20,14 @@ export const removeWishlistItem = (id, token) => {
     }
   );
 };
+export const addToWishlist = (packageId, token) => {
+  return axios.post(
+    `${API_URL}add`,
+    { packageId },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
