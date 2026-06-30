@@ -1,0 +1,309 @@
+/* ═══════════════════════════════════════════
+   PackageComparison.css
+   Matches the Uncharted project dark theme
+═══════════════════════════════════════════ */
+
+.pc-page {
+  min-height: 100vh;
+  background: #0f1117;
+  color: #e8e8e8;
+  padding: 32px 24px 80px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ── Header ── */
+.pc-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.pc-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.pc-subtitle {
+  color: #9ca3af;
+  font-size: 0.95rem;
+}
+
+/* ── Section titles ── */
+.pc-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #60a5fa;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 20px;
+}
+
+/* ── Error ── */
+.pc-error {
+  background: #7f1d1d;
+  color: #fca5a5;
+  padding: 10px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* ── Loading ── */
+.pc-loading {
+  text-align: center;
+  padding: 80px;
+  color: #9ca3af;
+  font-size: 1rem;
+}
+
+/* ── Selector cards grid ── */
+.pc-selector {
+  margin-bottom: 48px;
+}
+
+.pc-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.pc-card {
+  background: #1a1f2e;
+  border: 2px solid #2d3748;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+  position: relative;
+}
+
+.pc-card:hover {
+  border-color: #60a5fa;
+  transform: translateY(-3px);
+}
+
+.pc-card.selected {
+  border-color: #3b82f6;
+  background: #1e2d45;
+}
+
+.pc-card-img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.pc-card-body {
+  padding: 14px;
+}
+
+.pc-card-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f3f4f6;
+  margin-bottom: 4px;
+}
+
+.pc-card-dest {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  margin-bottom: 10px;
+}
+
+.pc-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pc-card-price {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #34d399;
+}
+
+.pc-card-days {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.pc-card-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #1e2d45;
+  color: #60a5fa;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 20px;
+  border: 1px solid #3b82f6;
+}
+
+.pc-card.selected .pc-card-badge {
+  background: #3b82f6;
+  color: #fff;
+}
+
+/* ── Comparison Table ── */
+.pc-table-section {
+  margin-top: 12px;
+}
+
+.pc-table-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #2d3748;
+}
+
+.pc-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #1a1f2e;
+}
+
+.pc-th-label {
+  background: #111827;
+  color: #6b7280;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 16px 20px;
+  text-align: left;
+  border-bottom: 1px solid #2d3748;
+  width: 130px;
+}
+
+.pc-th-pkg {
+  background: #111827;
+  padding: 16px;
+  text-align: center;
+  border-bottom: 1px solid #2d3748;
+  border-left: 1px solid #2d3748;
+  vertical-align: top;
+  min-width: 180px;
+  position: relative;
+}
+
+.pc-th-img {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+  margin: 0 auto 8px;
+}
+
+.pc-th-pkg span {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  line-height: 1.3;
+}
+
+.pc-remove-btn {
+  background: none;
+  border: 1px solid #4b5563;
+  color: #9ca3af;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 0.65rem;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.pc-remove-btn:hover {
+  background: #7f1d1d;
+  color: #fca5a5;
+  border-color: #7f1d1d;
+}
+
+.pc-td-label {
+  padding: 16px 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #9ca3af;
+  border-bottom: 1px solid #1f2937;
+}
+
+.pc-td-val {
+  padding: 16px;
+  font-size: 0.88rem;
+  color: #d1d5db;
+  text-align: center;
+  border-left: 1px solid #1f2937;
+  border-bottom: 1px solid #1f2937;
+  vertical-align: top;
+}
+
+/* Alternating row tint */
+.pc-table tbody tr:nth-child(even) .pc-td-label,
+.pc-table tbody tr:nth-child(even) .pc-td-val {
+  background: #161b27;
+}
+
+/* ── Stars ── */
+.pc-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.star {
+  font-size: 1rem;
+  color: #4b5563;
+}
+
+.star.filled {
+  color: #fbbf24;
+}
+
+.pc-rating-num {
+  margin-left: 6px;
+  font-size: 0.82rem;
+  color: #9ca3af;
+}
+
+/* ── Inclusions list ── */
+.pc-inclusions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  display: inline-block;
+}
+
+.pc-inclusions-list li {
+  font-size: 0.8rem;
+  color: #86efac;
+  margin-bottom: 4px;
+}
+
+/* ── Hint ── */
+.pc-hint {
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-top: 24px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .pc-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .pc-cards-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .pc-table-wrapper {
+    font-size: 0.8rem;
+  }
+}
