@@ -14,6 +14,7 @@ const destinationRoutes = require("./routes/destinationRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const authRoutes = require("./routes/authRoutes");
 const app = express();
 console.log("Checking MONGODB_URI:", process.env.MONGODB_URI);
 
@@ -35,7 +36,7 @@ mongoose
 app.use("/api/packages", packageRoutes);
 app.use("/api/destinations", destinationRoutes);
 app.use("/api/bookings", bookingRoutes);
-
+app.use("/api/auth", authRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/admin", adminRoutes);
 // Test Route
