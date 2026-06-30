@@ -13,6 +13,7 @@ const destinationRoutes = require("./routes/destinationRoutes");
 
 const reviewRoutes = require("./routes/reviewRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 const app = express();
 console.log("Checking MONGODB_URI:", process.env.MONGODB_URI);
 
@@ -36,6 +37,7 @@ app.use("/api/destinations", destinationRoutes);
 app.use("/api/bookings", bookingRoutes);
 
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/admin", adminRoutes);
 // Test Route
 app.get("/", (req, res) => {
   res.send("Uncharted Travel API Running...");
