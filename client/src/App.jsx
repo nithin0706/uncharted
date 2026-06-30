@@ -9,12 +9,11 @@ import Navbar from "./components/Navbar";
 import PackageComparison from "./pages/PackageComparison";
 import TravelBuddy from "./pages/TravelBuddy";
 import AdminDashboard from "./pages/AdminDashboard";
+import Reviews from "./pages/Reviews";
 
 function App() {
   return (
     <BrowserRouter>
-      <Navbar />
-
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -24,6 +23,7 @@ function App() {
         <Route path="/compare" element={<PackageComparison />} />
         <Route path="/travel-buddy" element={<TravelBuddy />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/reviews/:packageId" element={<Reviews />} />
       </Routes>
      
     </BrowserRouter>

@@ -1,3 +1,5 @@
+import { loginUser } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import "./../styles/Login.css";
@@ -6,6 +8,7 @@ import "./../styles/Login.css";
 const API_BASE = "http://localhost:5000/api";
 
 function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
