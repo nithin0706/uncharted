@@ -50,7 +50,9 @@ exports.login = async (req, res) => {
 };
 
 exports.getProfile = async (req, res) => {
+    const user = await User.findById(req.user.id).select("-password");
+
     res.status(200).json({
-        user: req.user
+        user
     });
 };
