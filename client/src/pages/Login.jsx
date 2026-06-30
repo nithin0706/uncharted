@@ -4,7 +4,6 @@ import { useState } from "react";
 import axios from "axios";
 import "./../styles/Login.css";
 
-// Same backend base URL used by AdminDashboard.jsx
 const API_BASE = "http://localhost:5000/api";
 
 function Login() {
@@ -30,18 +29,20 @@ function Login() {
         password,
       });
 
-      // Save the token so AdminDashboard.jsx (and other protected pages) can use it
       localStorage.setItem("token", res.data.token);
 
-      // Optional: save basic user info too, useful for showing "Hi, name" etc.
       if (res.data.user) {
         localStorage.setItem("user", JSON.stringify(res.data.user));
       }
 
       console.log("Login successful:", res.data);
-      // TODO: once you have routing set up for this, redirect the user here,
-      // e.g. navigate("/") or navigate("/admin") depending on their role.
-      alert("Login successful!");
+
+      const role = res.data.user?.role;
+      if (role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       if (err.response?.status === 400 || err.response?.status === 401) {
         setError("Invalid email or password.");
