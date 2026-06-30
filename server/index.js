@@ -14,6 +14,7 @@ const packageRoutes = require("./routes/packageRoutes");
 const destinationRoutes = require("./routes/destinationRoutes");
 const guideRoutes = require("./routes/guideRoutes");
 const wishlistRoutes = require("./routes/wishlistRoutes");
+const travelBuddyRoutes = require("./routes/travelBuddyRoutes");
 
 connectDB();
 
@@ -33,6 +34,8 @@ app.use("/api/wishlist", wishlistRoutes);
 app.get("/", (req, res) => {
     res.send("API is running...");
 });
+app.use("/api/buddies", travelBuddyRoutes);
+app.get("/", (req, res) => { res.send("API is running..."); });
 
 const PORT = process.env.PORT || 5000;
 
