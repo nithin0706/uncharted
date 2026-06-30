@@ -1,0 +1,135 @@
+.admin-dashboard {
+  max-width: 960px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  font-family: system-ui, sans-serif;
+}
+
+.admin-dashboard h1 {
+  margin-bottom: 1rem;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.admin-tabs .tab {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #555;
+  border-bottom: 3px solid transparent;
+}
+
+.admin-tabs .tab.active {
+  color: #1a73e8;
+  border-bottom-color: #1a73e8;
+  font-weight: 600;
+}
+
+.sample-banner {
+  background: #fff8e1;
+  border: 1px solid #ffe08a;
+  color: #8a6d00;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.action-error {
+  background: #fdecea;
+  border: 1px solid #f5b7b1;
+  color: #a93226;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+}
+
+.admin-table th {
+  background: #fafafa;
+  font-weight: 600;
+}
+
+.status-pill {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  text-transform: capitalize;
+}
+
+.status-pill.active,
+.status-pill.approved {
+  background: #e6f4ea;
+  color: #1e7e34;
+}
+
+.status-pill.deactivated {
+  background: #fdecea;
+  color: #a93226;
+}
+
+.status-pill.pending {
+  background: #fff8e1;
+  color: #8a6d00;
+}
+
+.status-pill.rejected {
+  background: #fdecea;
+  color: #a93226;
+}
+
+.action-btn {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-right: 0.4rem;
+}
+
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-btn.deactivate,
+.action-btn.delete {
+  background: #f5b7b1;
+  color: #7a1f12;
+}
+
+.action-btn.approve {
+  background: #a9dfbf;
+  color: #1e7e34;
+}
+
+.action-btn.reject {
+  background: #fce8b2;
+  color: #8a6d00;
+}
+
+.actions-cell {
+  white-space: nowrap;
+}
