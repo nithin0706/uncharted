@@ -1,4 +1,6 @@
+import { useNavigate } from "react-router-dom";
 import { MapPin, Star, ArrowRight } from "lucide-react";
+
 const destinations = [
   { 
     name: "Banff, Canada", 
@@ -20,6 +22,8 @@ const reviews = [
 ];
 
 export default function Landing() {
+  const navigate = useNavigate();
+
   return (
     <div className="bg-[#0B0B0F] text-[#F5F1E8] min-h-screen w-full overflow-x-hidden">
 
@@ -39,7 +43,10 @@ export default function Landing() {
           <p className="text-lg md:text-xl text-[#F5F1E8]/80 mb-10 max-w-xl mx-auto leading-relaxed">
             Curated trips to the planet's most breathtaking corners.
           </p>
-          <button className="inline-flex items-center gap-2 bg-[#C9A227] text-[#0B0B0F] font-semibold px-7 py-3.5 rounded-lg hover:bg-[#E8C766] transition-all hover:shadow-lg">
+          <button
+            onClick={() => navigate("/destinations")}
+            className="inline-flex items-center gap-2 bg-[#C9A227] text-[#0B0B0F] font-semibold px-7 py-3.5 rounded-lg hover:bg-[#E8C766] transition-all hover:shadow-lg"
+          >
             Start Exploring <ArrowRight size={18} />
           </button>
         </div>
@@ -54,7 +61,11 @@ export default function Landing() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
             {destinations.map((d) => (
-              <div key={d.name} className="rounded-2xl overflow-hidden bg-[#16161C] shadow-lg border border-white/5 hover:border-[#C9A227]/20 transition-all duration-300">
+              <div
+                key={d.name}
+                onClick={() => navigate("/destinations")}
+                className="rounded-2xl overflow-hidden bg-[#16161C] shadow-lg border border-white/5 hover:border-[#C9A227]/20 transition-all duration-300 cursor-pointer"
+              >
                 <img 
                   src={d.img} 
                   alt={d.name} 
@@ -92,7 +103,10 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto text-center px-8">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Start Your Journey</h2>
           <p className="text-[#9A958A] text-lg max-w-md mx-auto">Pick a destination, we'll handle the rest.</p>
-          <button className="mt-8 bg-[#C9A227] text-black px-8 py-4 rounded-xl font-semibold hover:bg-[#E8C766] transition-all transform hover:scale-[1.01] shadow-2xl">
+          <button
+            onClick={() => navigate("/destinations")}
+            className="mt-8 bg-[#C9A227] text-black px-8 py-4 rounded-xl font-semibold hover:bg-[#E8C766] transition-all transform hover:scale-[1.01] shadow-2xl"
+          >
             Plan My Trip
           </button>
         </div>
