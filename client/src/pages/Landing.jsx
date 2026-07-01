@@ -1,9 +1,8 @@
 import { MapPin, Star, ArrowRight } from "lucide-react";
-
 const destinations = [
   { 
     name: "Banff, Canada", 
-    img: "https://images.unsplash.com/photo-1542137198-d099818c3664?auto=format&fit=crop&w=800&q=80" 
+    img: "https://images.unsplash.com/photo-1558818061-547b1114aa6a?auto=format&fit=crop&w=800&q=80" 
   },
   { 
     name: "Santorini, Greece", 

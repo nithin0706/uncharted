@@ -30,10 +30,10 @@ const DestinationList = () => {
         setFiltered(result);
     };
 
-    if (loading) return <p>Loading destinations...</p>;
+    if (loading) return <p style={{ paddingTop: "100px", paddingLeft: "20px" }}>Loading destinations...</p>;
 
     return (
-        <div style={{ padding: "20px" }}>
+        <div style={{ padding: "20px", paddingTop: "100px" }}>
             <h1>Destinations</h1>
             <SearchFilter onSearch={handleSearch} />
             <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginTop: "20px" }}>
