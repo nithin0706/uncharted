@@ -1,3 +1,5 @@
+import Guides from "./pages/Guides";
+import Wishlist from "./pages/Wishlist";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -24,6 +26,8 @@ function App() {
         <Route path="/destinations/:id" element={<DestinationDetail />} />
         <Route path="/compare" element={<PackageComparison />} />
         <Route path="/travel-buddy" element={<TravelBuddy />} />
+        <Route path="/guides" element={<Guides />} />
+        <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/reviews/:packageId" element={<Reviews />} />
       </Routes>

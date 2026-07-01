@@ -1,0 +1,132 @@
+.wishlist-page{
+    min-height:100vh;
+    background:linear-gradient(to bottom,#0f0f0f,#181818);
+    color:white;
+    padding:120px 8% 60px;
+    font-family:"Poppins",sans-serif;
+}
+
+.wishlist-hero{
+    text-align:center;
+    margin-bottom:60px;
+}
+
+.wishlist-tag{
+    color:#C9A227;
+    letter-spacing:4px;
+    font-weight:600;
+    margin-bottom:10px;
+}
+
+.wishlist-hero h1{
+    font-size:3rem;
+    margin-bottom:15px;
+}
+
+.wishlist-hero span{
+    color:#C9A227;
+}
+
+.wishlist-subtitle{
+    color:#bdbdbd;
+    max-width:650px;
+    margin:auto;
+    line-height:1.7;
+}
+
+.wishlist-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:30px;
+}
+
+.wishlist-card{
+    background:#181818;
+    border:1px solid rgba(201,162,39,.2);
+    border-radius:20px;
+    padding:28px;
+    transition:.3s;
+    box-shadow:0 15px 35px rgba(0,0,0,.25);
+}
+
+.wishlist-card:hover{
+    transform:translateY(-8px);
+    border-color:#C9A227;
+}
+
+.wishlist-header{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.wishlist-header h2{
+    margin:0;
+    font-size:1.35rem;
+}
+
+.wishlist-info{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.wishlist-info p{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#ddd;
+    margin:0;
+}
+
+.wishlist-info svg{
+    color:#C9A227;
+}
+
+.wishlist-btn{
+    margin-top:30px;
+    width:100%;
+    border:none;
+    border-radius:12px;
+    padding:14px;
+    background:#C9A227;
+    color:#111;
+    font-weight:700;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.wishlist-btn:hover{
+    background:#E8C766;
+}
+
+.wishlist-empty{
+    text-align:center;
+    padding:100px 20px;
+}
+
+.wishlist-empty svg{
+    color:#C9A227;
+    margin-bottom:20px;
+}
+
+.wishlist-empty h2{
+    margin-bottom:10px;
+}
+
+.wishlist-empty p{
+    color:#aaa;
+}
+
+@media(max-width:768px){
+
+.wishlist-page{
+padding:100px 20px 50px;
+}
+
+.wishlist-hero h1{
+font-size:2.2rem;
+}
+
+}
