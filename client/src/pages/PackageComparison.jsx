@@ -109,7 +109,7 @@ const PackageComparison = () => {
   if (loading) return <div className="pc-loading">Loading packages…</div>;
 
   return (
-    <div className="pc-page">
+    <div className="pc-page pt-32">
       {/* ── Header ── */}
       <div className="pc-header">
         <h1>Compare Packages</h1>
