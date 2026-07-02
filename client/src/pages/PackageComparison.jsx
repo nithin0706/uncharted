@@ -1,41 +1,7 @@
+// client/src/pages/PackageComparison.jsx
 import { useState, useEffect } from "react";
 import "./PackageComparison.css";
 
-// ─── Sample fallback data (used when backend is not available) ───────────────
-const SAMPLE_PACKAGES = [
-  {
-    _id: "1",
-    name: "Kerala Backwaters Escape",
-    destination: "Kerala, India",
-    duration: 5,
-    price: 12999,
-    rating: 4.5,
-    inclusions: ["Hotel stay", "Houseboat cruise", "All meals", "Airport transfer"],
-    image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=400&q=80",
-  },
-  {
-    _id: "2",
-    name: "Rajasthan Royal Tour",
-    destination: "Rajasthan, India",
-    duration: 7,
-    price: 18500,
-    rating: 4.8,
-    inclusions: ["Heritage hotel", "Camel safari", "Breakfast", "Guide", "Airport transfer"],
-    image: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=400&q=80",
-  },
-  {
-    _id: "3",
-    name: "Goa Beach Getaway",
-    destination: "Goa, India",
-    duration: 4,
-    price: 9999,
-    rating: 4.2,
-    inclusions: ["Beach resort", "Breakfast", "Water sports", "Airport transfer"],
-    image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=400&q=80",
-  },
-];
-
-// ─── Star renderer ────────────────────────────────────────────────────────────
 function Stars({ rating }) {
   return (
     <span className="pc-stars">
@@ -47,24 +13,22 @@ function Stars({ rating }) {
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
 const PackageComparison = () => {
   const [allPackages, setAllPackages] = useState([]);
-  const [selected, setSelected] = useState([]); // max 3 package objects
+  const [selected, setSelected] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Fetch packages from backend; fall back to sample data
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const res = await fetch("/api/packages");
+        const res = await fetch("http://localhost:5000/api/packages");
         if (!res.ok) throw new Error("Server error");
         const data = await res.json();
         setAllPackages(data);
-      } catch {
-        // Backend not available yet — use sample data so UI still works
-        setAllPackages(SAMPLE_PACKAGES);
+      } catch (err) {
+        console.error(err);
+        setError("Could not load packages.");
       } finally {
         setLoading(false);
       }
@@ -72,7 +36,6 @@ const PackageComparison = () => {
     fetchPackages();
   }, []);
 
-  // Toggle a package in/out of comparison (max 3)
   const toggleSelect = (pkg) => {
     setSelected((prev) => {
       const alreadyIn = prev.find((p) => p._id === pkg._id);
@@ -88,17 +51,35 @@ const PackageComparison = () => {
 
   const isSelected = (id) => selected.some((p) => p._id === id);
 
-  // Comparison table rows
+  const lowestPrice = selected.length ? Math.min(...selected.map((p) => p.price)) : null;
+  const highestRating = selected.length ? Math.max(...selected.map((p) => p.ratings || 0)) : null;
+
   const rows = [
-    { label: "Destination", key: "destination" },
+    { label: "Destination", render: (p) => p.destination?.location || p.destination?.name || "—" },
     { label: "Duration", render: (p) => `${p.duration} days` },
-    { label: "Price", render: (p) => `₹${p.price.toLocaleString("en-IN")}` },
-    { label: "Rating", render: (p) => <Stars rating={p.rating} /> },
+    {
+      label: "Price",
+      render: (p) => (
+        <span className={p.price === lowestPrice ? "pc-best-value" : ""}>
+          ₹{p.price.toLocaleString("en-IN")}
+          {p.price === lowestPrice && <span className="pc-badge">Best Value</span>}
+        </span>
+      ),
+    },
+    {
+      label: "Rating",
+      render: (p) => (
+        <span className={p.ratings === highestRating ? "pc-best-value" : ""}>
+          <Stars rating={p.ratings || 0} />
+          {p.ratings === highestRating && <span className="pc-badge">Highest Rated</span>}
+        </span>
+      ),
+    },
     {
       label: "Inclusions",
       render: (p) => (
         <ul className="pc-inclusions-list">
-          {p.inclusions.map((inc, i) => (
+          {(p.inclusions || []).map((inc, i) => (
             <li key={i}>✓ {inc}</li>
           ))}
         </ul>
@@ -110,18 +91,13 @@ const PackageComparison = () => {
 
   return (
     <div className="pc-page pt-32">
-      {/* ── Header ── */}
       <div className="pc-header">
         <h1>Compare Packages</h1>
-        <p className="pc-subtitle">
-          Select up to <strong>3 packages</strong> to compare side-by-side.
-        </p>
+        <p className="pc-subtitle">Select up to <strong>3 packages</strong> to compare side-by-side.</p>
       </div>
 
-      {/* ── Error banner ── */}
       {error && <div className="pc-error">{error}</div>}
 
-      {/* ── Package selector cards ── */}
       <section className="pc-selector">
         <h2 className="pc-section-title">Choose Packages</h2>
         <div className="pc-cards-grid">
@@ -131,10 +107,10 @@ const PackageComparison = () => {
               className={`pc-card ${isSelected(pkg._id) ? "selected" : ""}`}
               onClick={() => toggleSelect(pkg)}
             >
-              <img src={pkg.image} alt={pkg.name} className="pc-card-img" />
+              <img src={pkg.images?.[0]} alt={pkg.name} className="pc-card-img" />
               <div className="pc-card-body">
                 <h3 className="pc-card-name">{pkg.name}</h3>
-                <p className="pc-card-dest">📍 {pkg.destination}</p>
+                <p className="pc-card-dest">📍 {pkg.destination?.location}</p>
                 <div className="pc-card-footer">
                   <span className="pc-card-price">₹{pkg.price.toLocaleString("en-IN")}</span>
                   <span className="pc-card-days">{pkg.duration} days</span>
@@ -146,7 +122,6 @@ const PackageComparison = () => {
         </div>
       </section>
 
-      {/* ── Comparison Table ── */}
       {selected.length >= 2 && (
         <section className="pc-table-section">
           <h2 className="pc-section-title">Side-by-Side Comparison</h2>
@@ -157,15 +132,9 @@ const PackageComparison = () => {
                   <th className="pc-th-label">Feature</th>
                   {selected.map((pkg) => (
                     <th key={pkg._id} className="pc-th-pkg">
-                      <img src={pkg.image} alt={pkg.name} className="pc-th-img" />
+                      <img src={pkg.images?.[0]} alt={pkg.name} className="pc-th-img" />
                       <span>{pkg.name}</span>
-                      <button
-                        className="pc-remove-btn"
-                        onClick={() => toggleSelect(pkg)}
-                        title="Remove"
-                      >
-                        ✕
-                      </button>
+                      <button className="pc-remove-btn" onClick={() => toggleSelect(pkg)} title="Remove">✕</button>
                     </th>
                   ))}
                 </tr>
@@ -175,9 +144,7 @@ const PackageComparison = () => {
                   <tr key={row.label}>
                     <td className="pc-td-label">{row.label}</td>
                     {selected.map((pkg) => (
-                      <td key={pkg._id} className="pc-td-val">
-                        {row.render ? row.render(pkg) : pkg[row.key]}
-                      </td>
+                      <td key={pkg._id} className="pc-td-val">{row.render(pkg)}</td>
                     ))}
                   </tr>
                 ))}
@@ -187,9 +154,7 @@ const PackageComparison = () => {
         </section>
       )}
 
-      {selected.length === 1 && (
-        <p className="pc-hint">Select one more package to start comparing.</p>
-      )}
+      {selected.length === 1 && <p className="pc-hint">Select one more package to start comparing.</p>}
     </div>
   );
 };
