@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import ReviewForm from "../components/ReviewForm";
 import ReviewList from "../components/ReviewList";
+import "../styles/Reviews.css";
 
 const Reviews = () => {
     const { packageId } = useParams();
@@ -24,17 +25,19 @@ const Reviews = () => {
         fetchReviews();
     }, [packageId]);
 
-    if (loading) return <p>Loading reviews...</p>;
+    if (loading) return <div className="rv-page"><p className="rv-loading">Loading reviews...</p></div>;
 
     return (
-        <div style={{ maxWidth: "800px", margin: "0 auto", padding: "20px" }}>
-            <h2>Reviews & Ratings</h2>
-            <ReviewForm packageId={packageId} onReviewSubmitted={fetchReviews} />
-            <ReviewList
-                reviews={reviewData.reviews}
-                avgRating={reviewData.avgRating}
-                totalReviews={reviewData.totalReviews}
-            />
+        <div className="rv-page">
+            <div className="rv-container">
+                <h2 className="rv-page-title">Reviews & Ratings</h2>
+                <ReviewForm packageId={packageId} onReviewSubmitted={fetchReviews} />
+                <ReviewList
+                    reviews={reviewData.reviews}
+                    avgRating={reviewData.avgRating}
+                    totalReviews={reviewData.totalReviews}
+                />
+            </div>
         </div>
     );
 };

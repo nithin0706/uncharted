@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = "http://localhost:5001/api/auth";
 
 export const getProfile = (token) => {
   return axios.get(`${API_URL}/profile`, {

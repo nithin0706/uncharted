@@ -1,20 +1,107 @@
 .login-container {
-  max-width: 400px;
-  margin: 40px auto;
-  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 128px 24px 60px;
+  background: #0B0B0F;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: #16161C;
+  border: 1px solid #25252d;
+  border-radius: 16px;
+  padding: 40px 36px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.login-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #F5F1E8;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.login-subtitle {
+  text-align: center;
+  color: #9A958A;
+  font-size: 0.92rem;
+  margin-bottom: 32px;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 20px;
 }
 
-.login-form input {
-  padding: 10px;
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.login-form button {
-  padding: 10px;
+.login-field label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #C9A227;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.login-field input {
+  background: #0B0B0F;
+  border: 1px solid #2a2a32;
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: #F5F1E8;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.login-field input::placeholder {
+  color: #55524a;
+}
+
+.login-field input:focus {
+  border-color: #C9A227;
+}
+
+.login-error {
+  background: #3a1414;
+  border: 1px solid #7f1d1d;
+  color: #fca5a5;
+  font-size: 0.85rem;
+  padding: 10px 14px;
+  border-radius: 8px;
+  text-align: center;
+  margin: 0;
+}
+
+.login-btn {
+  background: #C9A227;
+  color: #0B0B0F;
+  font-weight: 700;
+  font-size: 0.98rem;
+  border: none;
+  border-radius: 10px;
+  padding: 13px;
   cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s ease;
+}
+
+.login-btn:hover:not(:disabled) {
+  background: #E8C766;
+}
+
+.login-btn:disabled {
+  background: #4a4230;
+  color: #8a8578;
+  cursor: not-allowed;
 }

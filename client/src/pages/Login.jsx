@@ -4,7 +4,7 @@ import { useState } from "react";
 import axios from "axios";
 import "./../styles/Login.css";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "http://localhost:5001/api";
 
 function Login() {
   const navigate = useNavigate();
@@ -57,39 +57,38 @@ function Login() {
 
   return (
     <div className="login-container">
-      <h1>Login Page</h1>
+      <div className="login-card">
+        <h1 className="login-title">Welcome Back</h1>
+        <p className="login-subtitle">Sign in to continue your journey</p>
 
-      <form className="login-form" onSubmit={handleSubmit}>
-        <div>
-          <label>Email</label>
-          <br />
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
+        <form className="login-form" onSubmit={handleSubmit}>
+          <div className="login-field">
+            <label>Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+            />
+          </div>
 
-        <br />
+          <div className="login-field">
+            <label>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+            />
+          </div>
 
-        <div>
-          <label>Password</label>
-          <br />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
+          {error && <p className="login-error">{error}</p>}
 
-        <br />
-
-        {error && <p style={{ color: "red" }}>{error}</p>}
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
