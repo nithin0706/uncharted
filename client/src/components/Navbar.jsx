@@ -35,13 +35,7 @@ export default function Navbar() {
           Compare
         </Link>
 
-        <Link
-          to="/travel-buddy"
-          className="text-[#E8C766]/80 hover:text-white transition-colors"
-        >
-          Travel Buddy
-        </Link>
-
+     
         <Link
           to="/guides"
           className="text-[#E8C766]/80 hover:text-white transition-colors inline-flex items-center gap-1"

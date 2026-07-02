@@ -9,7 +9,7 @@ import DestinationList from "./pages/DestinationList";
 import DestinationDetail from "./pages/DestinationDetail";
 import Navbar from "./components/Navbar";
 import PackageComparison from "./pages/PackageComparison";
-import TravelBuddy from "./pages/TravelBuddy";
+
 import AdminDashboard from "./pages/AdminDashboard";
 import Reviews from "./pages/Reviews";
 
@@ -25,7 +25,7 @@ function App() {
         <Route path="/destinations" element={<DestinationList />} />
         <Route path="/destinations/:id" element={<DestinationDetail />} />
         <Route path="/compare" element={<PackageComparison />} />
-        <Route path="/travel-buddy" element={<TravelBuddy />} />
+      
         <Route path="/guides" element={<Guides />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/admin" element={<AdminDashboard />} />
