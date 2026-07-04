@@ -35,6 +35,15 @@ const SAMPLE_PACKAGES = [
   },
 ];
 
+// ─── Helper to safely get a human-readable destination string ───────────────
+// Handles both real API data (destination is a populated object: {_id, name, location})
+// and sample fallback data (destination is a plain string).
+function getDestinationLabel(destination) {
+  if (!destination) return "";
+  if (typeof destination === "string") return destination;
+  return destination.name || destination.location || "";
+}
+
 // ─── Star renderer ────────────────────────────────────────────────────────────
 function Stars({ rating }) {
   return (
@@ -90,10 +99,10 @@ const PackageComparison = () => {
 
   // Comparison table rows
   const rows = [
-    { label: "Destination", key: "destination" },
+    { label: "Destination", render: (p) => getDestinationLabel(p.destination) },
     { label: "Duration", render: (p) => `${p.duration} days` },
     { label: "Price", render: (p) => `₹${p.price.toLocaleString("en-IN")}` },
-    { label: "Rating", render: (p) => <Stars rating={p.rating} /> },
+    { label: "Rating", render: (p) => <Stars rating={p.ratings ?? 0} /> },
     {
       label: "Inclusions",
       render: (p) => (
@@ -131,10 +140,10 @@ const PackageComparison = () => {
               className={`pc-card ${isSelected(pkg._id) ? "selected" : ""}`}
               onClick={() => toggleSelect(pkg)}
             >
-              <img src={pkg.image} alt={pkg.name} className="pc-card-img" />
+              <img src={pkg.images?.[0]} alt={pkg.name} className="pc-card-img" />
               <div className="pc-card-body">
                 <h3 className="pc-card-name">{pkg.name}</h3>
-                <p className="pc-card-dest">📍 {pkg.destination}</p>
+                <p className="pc-card-dest">📍 {getDestinationLabel(pkg.destination)}</p>
                 <div className="pc-card-footer">
                   <span className="pc-card-price">₹{pkg.price.toLocaleString("en-IN")}</span>
                   <span className="pc-card-days">{pkg.duration} days</span>
@@ -157,7 +166,7 @@ const PackageComparison = () => {
                   <th className="pc-th-label">Feature</th>
                   {selected.map((pkg) => (
                     <th key={pkg._id} className="pc-th-pkg">
-                      <img src={pkg.image} alt={pkg.name} className="pc-th-img" />
+                      <img src={pkg.images?.[0]} alt={pkg.name} className="pc-th-img" />
                       <span>{pkg.name}</span>
                       <button
                         className="pc-remove-btn"
@@ -176,7 +185,7 @@ const PackageComparison = () => {
                     <td className="pc-td-label">{row.label}</td>
                     {selected.map((pkg) => (
                       <td key={pkg._id} className="pc-td-val">
-                        {row.render ? row.render(pkg) : pkg[row.key]}
+                        {row.render(pkg)}
                       </td>
                     ))}
                   </tr>
