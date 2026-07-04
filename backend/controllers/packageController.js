@@ -39,7 +39,18 @@ const getPackageById = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
-
+const getPackagesForComparison = async (req, res) => {
+    try {
+        const ids = req.query.ids ? req.query.ids.split(",") : [];
+        if (ids.length === 0) {
+            return res.status(400).json({ message: "No package ids provided" });
+        }
+        const packages = await Package.find({ _id: { $in: ids } }).populate("destination", "name location");
+        res.status(200).json(packages);
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
 const updatePackage = async (req, res) => {
     try {
         const package_ = await Package.findByIdAndUpdate(
@@ -68,4 +79,5 @@ const deletePackage = async (req, res) => {
     }
 };
 
-module.exports = { createPackage, getPackages, getPackageById, updatePackage, deletePackage };
+
+module.exports = { createPackage, getPackages, getPackageById, updatePackage, deletePackage, getPackagesForComparison };
