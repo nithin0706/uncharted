@@ -1,6 +1,12 @@
-import { Link } from "react-router-dom";
-import { Star, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Star, Clock, Heart } from "lucide-react";
 import { useCompare } from "../context/CompareContext";
+import {
+  getWishlist,
+  addToWishlist,
+  removeWishlistItem,
+} from "../services/wishlistService";
 
 // Package.inclusions is the closest thing we have to a description in the
 // current schema — join a few of them into a short blurb. If you later add
@@ -14,8 +20,66 @@ function buildBlurb(pkg) {
 
 export default function DestinationCard({ pkg }) {
   const { isComparing, toggleCompare, maxCompare, compareList } = useCompare();
+  const navigate = useNavigate();
   const checked = isComparing(pkg._id);
   const atLimit = !checked && compareList.length >= maxCompare;
+
+  const [wishlisted, setWishlisted] = useState(false);
+  const [wishlistId, setWishlistId] = useState(null);
+  const [savingWishlist, setSavingWishlist] = useState(false);
+
+  // Check if this package is already wishlisted by the logged-in user
+  useEffect(() => {
+    let cancelled = false;
+    const checkWishlist = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      try {
+        const res = await getWishlist(token);
+        if (cancelled) return;
+        const match = res.data.find(
+          (item) => item.packageId && item.packageId._id === pkg._id
+        );
+        if (match) {
+          setWishlisted(true);
+          setWishlistId(match._id);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    checkWishlist();
+    return () => {
+      cancelled = true;
+    };
+  }, [pkg._id]);
+
+  const toggleWishlist = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    setSavingWishlist(true);
+    try {
+      if (wishlisted) {
+        await removeWishlistItem(wishlistId, token);
+        setWishlisted(false);
+        setWishlistId(null);
+      } else {
+        const res = await addToWishlist({ packageId: pkg._id }, token);
+        setWishlisted(true);
+        setWishlistId(res.data.wishlist._id);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update wishlist");
+    } finally {
+      setSavingWishlist(false);
+    }
+  };
 
   const locationLabel =
     typeof pkg.destination === "object" && pkg.destination !== null
@@ -55,6 +119,19 @@ export default function DestinationCard({ pkg }) {
           {checked ? "Added" : "Compare"}
         </label>
 
+        <button
+          onClick={toggleWishlist}
+          disabled={savingWishlist}
+          aria-label="Toggle wishlist"
+          className="absolute top-3 left-3 z-10 p-2 rounded-full bg-black/40 backdrop-blur-md hover:bg-black/60 transition-colors disabled:opacity-50"
+        >
+          <Heart
+            size={16}
+            fill={wishlisted ? "#C9A227" : "none"}
+            color="#C9A227"
+          />
+        </button>
+
         <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-black/40 backdrop-blur-md text-[#E8C766] text-xs font-semibold px-3 py-1 rounded-full">
           <Clock size={12} />
           {pkg.duration} {pkg.duration === 1 ? "Day" : "Days"}
@@ -92,7 +169,7 @@ export default function DestinationCard({ pkg }) {
         </p>
 
         <Link
-          to={`/destinations/${pkg._id}`}
+          to={`/packages/${pkg._id}`}
           className="w-full text-center py-2.5 rounded-lg bg-[#C9A227] text-[#0B0B0F] font-semibold hover:bg-[#E8C766] active:scale-95 transition-all"
         >
           View Details

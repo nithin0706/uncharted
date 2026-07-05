@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import DestinationsPage from "./pages/DestinationsPage";
 import DestinationDetail from "./pages/DestinationDetail";
+import PackageDetail from "./pages/PackageDetail";
 import Navbar from "./components/Navbar";
 import ComparePage from "./pages/ComparePage";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -26,6 +27,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/destinations" element={<DestinationsPage />} />
             <Route path="/destinations/:id" element={<DestinationDetail />} />
+            <Route path="/packages/:id" element={<PackageDetail />} />
             <Route path="/compare" element={<ComparePage />} />
             <Route path="/guides" element={<Guides />} />
             <Route path="/wishlist" element={<Wishlist />} />

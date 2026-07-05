@@ -78,19 +78,12 @@ export default function DestinationsPage() {
   }, []);
 
   // Main fetch — re-runs whenever any filter changes, hitting the backend
-  // with real query params instead of filtering client-side.
-  // NOTE: we intentionally do NOT fetch anything until a destination
-  // (location) has been selected — packages list stays empty by default.
+  // with real query params instead of filtering client-side. Shows all
+  // packages by default; selecting a destination just narrows the results.
   useEffect(() => {
     let cancelled = false;
 
     async function fetchPackages() {
-      if (!location) {
-        setPackages([]);
-        setLoading(false);
-        setError(null);
-        return;
-      }
       try {
         setLoading(true);
         const priceBand = PRICE_BANDS[priceBandIndex];
@@ -216,9 +209,7 @@ export default function DestinationsPage() {
 
       {!loading && !error && packages.length === 0 && (
         <p className="text-[#9A958A] text-center py-16">
-          {location
-            ? "No packages match your filters. Try widening your search."
-            : "Select a destination above to see its packages."}
+          No packages match your filters. Try widening your search.
         </p>
       )}
 

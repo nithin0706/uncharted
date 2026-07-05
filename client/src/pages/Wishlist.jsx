@@ -15,7 +15,12 @@ function Wishlist() {
     try {
       const token = localStorage.getItem("token");
       const response = await getWishlist(token);
-      setWishlist(response.data);
+      // Guard against any malformed/stale entries (e.g. a wishlist row whose
+      // referenced package was deleted) so one bad row can't crash the page.
+      const safeData = Array.isArray(response.data) ? response.data : [];
+      setWishlist(
+        safeData.filter((item) => item && (item.packageId || item.destinationId))
+      );
     } catch (error) {
       console.error(error);
     }

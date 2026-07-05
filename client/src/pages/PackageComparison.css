@@ -199,20 +199,57 @@
   line-height: 1.3;
 }
 
+/* Small circular "✕" remove button inside each comparison column header.
+   Explicit flex layout + box-sizing keeps it a true 22px circle regardless
+   of the surrounding flex/grid context — this is what was stretching it
+   into an oval before. */
 .pc-remove-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  flex-shrink: 0;
   background: none;
   border: 1px solid #4b5563;
   color: #9ca3af;
   border-radius: 50%;
   width: 22px;
   height: 22px;
+  padding: 0;
+  line-height: 1;
   font-size: 0.65rem;
   cursor: pointer;
-  margin-top: 8px;
+  margin: 8px auto 0;
   transition: background 0.15s, color 0.15s;
 }
 
 .pc-remove-btn:hover {
+  background: #7f1d1d;
+  color: #fca5a5;
+  border-color: #7f1d1d;
+}
+
+/* "Clear all" pill button in the page header — separate from the small
+   circular remove buttons above so it doesn't get squashed into a circle. */
+.pc-clear-all-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin: 12px auto 0;
+  padding: 8px 20px;
+  background: none;
+  border: 1px solid #4b5563;
+  color: #9ca3af;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.pc-clear-all-btn:hover {
   background: #7f1d1d;
   color: #fca5a5;
   border-color: #7f1d1d;
@@ -293,26 +330,4 @@
   margin-top: 2px;
 }
 
-/* ── Hint ── */
-.pc-hint {
-  text-align: center;
-  color: #6b7280;
-  font-size: 0.9rem;
-  margin-top: 24px;
-}
-
-/* ── Responsive ── */
-@media (max-width: 600px) {
-  .pc-header h1 {
-    font-size: 1.5rem;
-  }
-
-  .pc-cards-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .pc-table-wrapper {
-    font-size: 0.8rem;
-  }
-}
+/* ──

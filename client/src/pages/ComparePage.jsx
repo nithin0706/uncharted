@@ -115,7 +115,7 @@ const ComparePage = () => {
             : "Add packages to compare from the destinations page."}
         </p>
         {compareList.length > 0 && (
-          <button className="pc-remove-btn" onClick={clearCompare} style={{ marginTop: "8px" }}>
+          <button className="pc-clear-all-btn" onClick={clearCompare}>
             Clear all
           </button>
         )}
@@ -172,8 +172,9 @@ const ComparePage = () => {
                         className="pc-remove-btn"
                         onClick={() => removeFromCompare(pkg._id)}
                         title="Remove"
+                        aria-label={`Remove ${pkg.name} from comparison`}
                       >
-                        ✕
+                        <span aria-hidden="true">✕</span>
                       </button>
                     </th>
                   ))}
