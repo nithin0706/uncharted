@@ -22,7 +22,12 @@ export default function DestinationCard({ pkg }) {
       ? pkg.destination.name || pkg.destination.location
       : null;
 
-  const image = pkg.images?.[0] || "https://placehold.co/600x400/16161C/9A958A?text=Uncharted";
+  // Fall back to the parent Destination's image if this specific package
+  // doesn't have its own images set yet.
+  const image =
+    pkg.images?.[0] ||
+    pkg.destination?.images?.[0] ||
+    "https://placehold.co/600x400/16161C/9A958A?text=Uncharted";
 
   return (
     <article className="group bg-[#16161C] border border-[#25252d] rounded-xl overflow-hidden flex flex-col hover:border-[#C9A227]/40 transition-colors">
@@ -56,13 +61,13 @@ export default function DestinationCard({ pkg }) {
         </div>
       </div>
 
-      <div className="p-5 flex flex-col flex-grow">
+      <div className="p-5 flex flex-col grow ">
         <div className="flex justify-between items-start gap-3 mb-1">
           <h3 className="text-lg font-semibold text-[#F5F1E8] leading-snug">
             {pkg.name}
           </h3>
           <p className="text-lg font-semibold text-[#C9A227] whitespace-nowrap">
-            ${pkg.price?.toLocaleString()}
+            ₹{pkg.price?.toLocaleString("en-IN")}
           </p>
         </div>
 
@@ -73,11 +78,16 @@ export default function DestinationCard({ pkg }) {
         <div className="flex items-center gap-1 mb-3">
           <Star size={14} className="text-[#C9A227] fill-[#C9A227]" />
           <span className="text-sm font-medium text-[#F5F1E8]">
-            {pkg.ratings?.toFixed(1) ?? "New"}
+            {pkg.reviewCount > 0 ? pkg.avgRating.toFixed(1) : "New"}
           </span>
+          {pkg.reviewCount > 0 && (
+            <span className="text-xs text-[#9A958A]">
+              ({pkg.reviewCount} {pkg.reviewCount === 1 ? "review" : "reviews"})
+            </span>
+          )}
         </div>
 
-        <p className="text-sm text-[#9A958A] mb-4 flex-grow line-clamp-2">
+        <p className="text-sm text-[#9A958A] mb-4 grow line-clamp-2">
           {buildBlurb(pkg)}
         </p>
 

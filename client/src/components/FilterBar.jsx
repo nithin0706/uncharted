@@ -1,10 +1,10 @@
-import { Search, MapPin, DollarSign, Clock } from "lucide-react";
+import { Search, MapPin, IndianRupee, Clock } from "lucide-react";
 
 const PRICE_BANDS = [
   { label: "Any Price", min: 0, max: Infinity },
-  { label: "Under $1,000", min: 0, max: 1000 },
-  { label: "$1,000 - $2,000", min: 1000, max: 2000 },
-  { label: "$2,000+", min: 2000, max: Infinity },
+  { label: "Under ₹10,000", min: 0, max: 10000 },
+  { label: "₹10,000 - ₹20,000", min: 10000, max: 20000 },
+  { label: "₹20,000+", min: 20000, max: Infinity },
 ];
 
 const DURATION_BANDS = [
@@ -30,14 +30,15 @@ export default function FilterBar({
       <div className="relative max-w-2xl">
         <Search
           size={18}
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9A958A]"
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9A958A] pointer-events-none"
         />
         <input
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search destinations, packages..."
-          className="w-full pl-11 pr-4 py-3.5 rounded-full"
+          style={{ paddingLeft: "44px" }}
+          className="w-full pr-4 py-3.5 rounded-full"
         />
       </div>
 
@@ -59,7 +60,7 @@ export default function FilterBar({
         </div>
 
         <div className="flex items-center gap-2 bg-[#16161C] border border-[#25252d] rounded-full pl-3 pr-2 py-1.5 whitespace-nowrap">
-          <DollarSign size={16} className="text-[#C9A227]" />
+          <IndianRupee size={16} className="text-[#C9A227]" />
           <select
             value={priceBandIndex}
             onChange={(e) => onPriceBandChange(Number(e.target.value))}
