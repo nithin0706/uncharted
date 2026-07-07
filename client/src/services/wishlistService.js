@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/wishlist/";
+const API_URL = "https://uncharted-60k4.onrender.com/api/wishlist";
 
 export const getWishlist = (token) => {
   return axios.get(API_URL, {
