@@ -23,8 +23,9 @@ const PackageDetail = () => {
   useEffect(() => {
     let cancelled = false;
     axios
-      .get(`/api/packages/${id}`)
+      .get(`http://localhost:5001/api/packages/${id}`)
       .then((res) => {
+        console.log(res.data);
         if (!cancelled) setPkg(res.data);
       })
       .catch((err) => {
