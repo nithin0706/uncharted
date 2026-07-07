@@ -22,5 +22,4 @@ const destinationSchema = new mongoose.Schema({
         ref: "Package",
     }],
 }, { timestamps: true });
-
 module.exports = mongoose.models.Destination || mongoose.model("Destination", destinationSchema);

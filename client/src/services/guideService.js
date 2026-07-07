@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/guides";
+const API_URL = "https://uncharted-60k4.onrender.com/api/guides";
 
 export const getGuides = () => {
   return axios.get(API_URL);

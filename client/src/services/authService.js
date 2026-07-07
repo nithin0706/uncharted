@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5001/api/auth";
+const API_URL = "https://uncharted-60k4.onrender.com/api/auth";
 
 export const getProfile = (token) => {
   return axios.get(`${API_URL}/profile`, {
