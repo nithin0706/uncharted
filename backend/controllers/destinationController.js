@@ -6,7 +6,6 @@ const createDestination = async (req, res) => {
 
         const existing = await Destination.findOne({ name });
         if (existing) {
-            return res.status(400).json({ message: "Destination already exists" });
         }
 
         const destination = new Destination({ name, description, images, location });
@@ -17,7 +16,6 @@ const createDestination = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
-
 const getDestinations = async (req, res) => {
     try {
         const destinations = await Destination.find().sort({ createdAt: -1 });
