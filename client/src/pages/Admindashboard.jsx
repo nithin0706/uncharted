@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import "./AdminDashboard.css";
+import "./Admindashboard.css";
 
 // Real backend base URL (your project's backend port)
 const API_BASE = `${import.meta.env.VITE_API_URL}/api/admin`;
