@@ -10,7 +10,7 @@ import DestinationDetail from "./pages/DestinationDetail";
 import PackageDetail from "./pages/PackageDetail";
 import Navbar from "./components/Navbar";
 import ComparePage from "./pages/ComparePage";
-import AdminDashboard from "./pages/Admindashboard";
+import Admindashboard from "./pages/Admindashboard";
 import Reviews from "./pages/Reviews";
 import { CompareProvider } from "./context/CompareContext";
 
@@ -31,7 +31,7 @@ function App() {
             <Route path="/compare" element={<ComparePage />} />
             <Route path="/guides" element={<Guides />} />
             <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin" element={<Admindashboard />} />
             <Route path="/reviews/:packageId" element={<Reviews />} />
           </Routes>
         </div>
