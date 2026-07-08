@@ -1,4 +1,4 @@
-const Destination = require("../models/Destination");
+const Destination = require("../models/destination");
 
 const createDestination = async (req, res) => {
     try {
