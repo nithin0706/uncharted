@@ -16,7 +16,8 @@ const ReviewForm = ({ packageId, onReviewSubmitted }) => {
         try {
             const token = localStorage.getItem("token");
             await axios.post(
-                "http://localhost:5001/api/reviews",
+                `${import.meta.env.VITE_API_URL}/api/reviews`,
+
                 { packageId, rating, reviewText },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

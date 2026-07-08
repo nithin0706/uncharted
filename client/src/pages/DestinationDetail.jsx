@@ -19,7 +19,7 @@ const DestinationDetail = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/destinations/${id}`)
+      .get(`${import.meta.env.VITE_NITHIN_API_URL}/api/destinations/...`)
       .then((res) => {
         setDestination(res.data);
         setLoading(false);

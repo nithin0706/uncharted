@@ -20,7 +20,7 @@ const DestinationList = () => {
         setSelectedIds(savedCompare);
 
         // Pointing to your core backend app port (5001)
-        axios.get("http://localhost:5001/api/destinations")
+axios.get(`${import.meta.env.VITE_API_URL}/api/destinations`)
             .then((res) => {
                 setDestinations(res.data);
                 setFiltered(res.data);

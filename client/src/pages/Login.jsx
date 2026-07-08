@@ -4,8 +4,7 @@ import { useState } from "react";
 import axios from "axios";
 import "./../styles/Login.css";
 
-const API_BASE = "http://localhost:5001/api";
-
+const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");

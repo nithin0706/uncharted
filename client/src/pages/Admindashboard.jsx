@@ -3,7 +3,7 @@ import axios from "axios";
 import "./AdminDashboard.css";
 
 // Real backend base URL (your project's backend port)
-const API_BASE = "http://localhost:5001/api/admin";
+const API_BASE = `${import.meta.env.VITE_API_URL}/api/admin`;
 
 // Creates an axios instance that automatically attaches the admin's auth token
 function getApi() {

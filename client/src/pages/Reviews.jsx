@@ -12,7 +12,7 @@ const Reviews = () => {
 
     const fetchReviews = async () => {
         try {
-            const res = await axios.get(`http://localhost:5001/api/reviews/${packageId}`);
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/reviews`)
             setReviewData(res.data);
             setLoading(false);
         } catch (err) {

@@ -87,7 +87,8 @@ const PackageComparison = () => {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/packages");
+        // FIXED: Corrected the broken string literal/backtick syntax
+        const res = await fetch(`${import.meta.env.VITE_NITHIN_API_URL}/api/packages`);
         if (!res.ok) throw new Error("Server error");
 
         const data = await res.json();
