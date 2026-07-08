@@ -10,7 +10,7 @@ import DestinationDetail from "./pages/DestinationDetail";
 import PackageDetail from "./pages/PackageDetail";
 import Navbar from "./components/Navbar";
 import ComparePage from "./pages/ComparePage";
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminDashboard from "./pages/Admindashboard";
 import Reviews from "./pages/Reviews";
 import { CompareProvider } from "./context/CompareContext";
 
