@@ -33,7 +33,9 @@ export default function DestinationsPage() {
     let cancelled = false;
     async function fetchLocationOptions() {
       try {
-        const res = await axios.get("/api/packages");
+        const res = await axios.get(
+  `${import.meta.env.VITE_NITHIN_API_URL}/api/packages`
+);
         if (cancelled) return;
 
         const names = [];
@@ -67,7 +69,10 @@ export default function DestinationsPage() {
         if (durationBand.min > 0) params.durationMin = durationBand.min;
         if (durationBand.max !== Infinity) params.durationMax = durationBand.max;
 
-        const res = await axios.get("/api/packages", { params });
+       const res = await axios.get(
+  `${import.meta.env.VITE_NITHIN_API_URL}/api/packages`,
+  { params }
+);
         if (!cancelled) {
           setPackages(res.data);
           setError(null);
