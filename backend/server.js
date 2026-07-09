@@ -22,7 +22,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       // Replace this with your actual Vercel URL
-      "https://YOUR-VERCEL-APP.vercel.app",
+      "https://uncharted-zfi4.vercel.app/",
     ],
     credentials: true,
   })
