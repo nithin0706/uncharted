@@ -17,26 +17,21 @@ const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://uncharted-zfi4.vercel.app"
-    ],
-    credentials: true,
-  })
-);
+// TEMPORARY: Allow all origins
+app.use(cors());
 
 app.use(express.json());
 
+// MongoDB Connection
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => {
-    console.error(err);
+    console.error("MongoDB Connection Error:", err);
     process.exit(1);
   });
 
+// Routes
 app.use("/api/packages", packageRoutes);
 app.use("/api/destinations", destinationRoutes);
 app.use("/api/bookings", bookingRoutes);
@@ -44,6 +39,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/admin", adminRoutes);
 
+// Health Check
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
