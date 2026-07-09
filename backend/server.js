@@ -21,8 +21,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      // Replace this with your actual Vercel URL
-      "https://uncharted-zfi4.vercel.app/",
+      "https://uncharted-zfi4.vercel.app"
     ],
     credentials: true,
   })
@@ -30,7 +29,6 @@ app.use(
 
 app.use(express.json());
 
-// MongoDB Connection
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB Connected"))
@@ -39,7 +37,6 @@ mongoose
     process.exit(1);
   });
 
-// Routes
 app.use("/api/packages", packageRoutes);
 app.use("/api/destinations", destinationRoutes);
 app.use("/api/bookings", bookingRoutes);
