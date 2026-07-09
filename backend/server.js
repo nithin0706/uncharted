@@ -1,52 +1,60 @@
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const connectDB = require("./config/db");
+
+const authRoutes = require("./routes/authRoutes");
+const bookingRoutes = require("./routes/bookingRoutes");
+const packageRoutes = require("./routes/packageRoutes");
+const destinationRoutes = require("./routes/destinationRoutes");
+const guideRoutes = require("./routes/guideRoutes");
+const wishlistRoutes = require("./routes/wishlistRoutes");
+const travelBuddyRoutes = require("./routes/travelBuddyRoutes");
+
 const dns = require("dns");
 dns.setDefaultResultOrder("ipv4first");
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
-require("dotenv").config();
-
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-
-const packageRoutes = require("./routes/packageRoutes");
-const destinationRoutes = require("./routes/destinationRoutes");
-const reviewRoutes = require("./routes/reviewRoutes");
-const bookingRoutes = require("./routes/bookingRoutes");
-const adminRoutes = require("./routes/adminRoutes");
-const authRoutes = require("./routes/authRoutes");
+dotenv.config();
+connectDB();
 
 const app = express();
 
-// Middleware
-app.use(cors()); // You can restrict this to your Vercel URL later
 app.use(express.json());
 
-// MongoDB Connection
-mongoose
-  .connect(process.env.MONGODB_URI, {
-    dbName: "uncharted",
+// ✅ CORS Configuration
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://uncharted.vercel.app", // Replace if your Vercel URL is different
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
   })
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => {
-    console.error("MongoDB Connection Error:", err);
-    process.exit(1);
-  });
+);
 
 // Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/bookings", bookingRoutes);
 app.use("/api/packages", packageRoutes);
 app.use("/api/destinations", destinationRoutes);
-app.use("/api/bookings", bookingRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/reviews", reviewRoutes);
-app.use("/api/admin", adminRoutes);
+app.use("/api/guides", guideRoutes);
+app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/buddies", travelBuddyRoutes);
 
-// Health Check Route
 app.get("/", (req, res) => {
-  res.send("Uncharted Travel API Running...");
+  res.send("API is running...");
 });
 
-// Start Server
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
