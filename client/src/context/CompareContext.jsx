@@ -5,28 +5,45 @@ const CompareContext = createContext(null);
 const MAX_COMPARE = 4; // adjust if you want a different cap
 
 export function CompareProvider({ children }) {
-  const [compareList, setCompareList] = useState([]); // array of package _id strings
-
+  const [compareList, setCompareList] = useState(() => {
+  return JSON.parse(localStorage.getItem("compare_packages")) || [];
+});
   const toggleCompare = useCallback((id) => {
-    setCompareList((prev) => {
-      if (prev.includes(id)) {
-        return prev.filter((pkgId) => pkgId !== id);
-      }
-      if (prev.length >= MAX_COMPARE) {
-        // optional: swap in a toast/alert here instead of silently ignoring
-        return prev;
-      }
-      return [...prev, id];
-    });
-  }, []);
+  setCompareList((prev) => {
+    let updated;
 
+    if (prev.includes(id)) {
+      updated = prev.filter((pkgId) => pkgId !== id);
+    } else {
+      if (prev.length >= MAX_COMPARE) return prev;
+      updated = [...prev, id];
+    }
+
+    localStorage.setItem(
+      "compare_packages",
+      JSON.stringify(updated)
+    );
+
+    return updated;
+  });
+}, []);
   const removeFromCompare = useCallback((id) => {
-    setCompareList((prev) => prev.filter((pkgId) => pkgId !== id));
-  }, []);
+  setCompareList((prev) => {
+    const updated = prev.filter((pkgId) => pkgId !== id);
 
-  const clearCompare = useCallback(() => {
-    setCompareList([]);
-  }, []);
+    localStorage.setItem(
+      "compare_packages",
+      JSON.stringify(updated)
+    );
+
+    return updated;
+  });
+}, []);
+
+ const clearCompare = useCallback(() => {
+  localStorage.removeItem("compare_packages");
+  setCompareList([]);
+}, []);
 
   const isComparing = useCallback(
     (id) => compareList.includes(id),
