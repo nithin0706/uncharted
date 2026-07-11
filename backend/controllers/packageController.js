@@ -162,13 +162,22 @@ const deletePackage = async (req, res) => {
       error: error.message,
     });
   }
+};const comparePackages = async (req, res) => {
+    try {
+        const { ids } = req.query;
+
+        if (!ids) {
+            return res.status(400).json({ message: "No package ids provided" });
+        }
+
+        const idArray = ids.split(",").map((id) => id.trim());
+
+        const packages = await Package.find({ _id: { $in: idArray } }).populate("destination", "name location");
+
+        res.status(200).json(packages);
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
 };
 
-module.exports = {
-  createPackage,
-  getPackages,
-  getPackageById,
-  getPackagesForComparison,
-  updatePackage,
-  deletePackage,
-};
+module.exports = { createPackage, getPackages, getPackageById, updatePackage, deletePackage, comparePackages };

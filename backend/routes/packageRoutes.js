@@ -1,13 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const { createPackage, getPackages, getPackageById, updatePackage, deletePackage, getPackagesForComparison } = require("../controllers/packageController");
-const { protect, adminOnly } = require("../middleware/authMiddleware");
+const {
+    createPackage,
+    getPackages,
+    getPackageById,
+    updatePackage,
+    deletePackage,
+    comparePackages,
+} = require("../controllers/packageController");
 
+router.post("/", createPackage);
 router.get("/", getPackages);
-router.get("/compare", getPackagesForComparison);
+router.get("/compare", comparePackages);   // must be before /:id
 router.get("/:id", getPackageById);
-router.post("/", protect, adminOnly, createPackage);
-router.put("/:id", protect, adminOnly, updatePackage);
-router.delete("/:id", protect, adminOnly, deletePackage);
+router.put("/:id", updatePackage);
+router.delete("/:id", deletePackage);
 
 module.exports = router;
