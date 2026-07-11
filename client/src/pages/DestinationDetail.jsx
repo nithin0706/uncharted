@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../api";
 import { MapPin, ArrowLeft, Heart } from "lucide-react";
 import {
   getWishlist,
@@ -19,7 +19,7 @@ const DestinationDetail = () => {
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_NITHIN_API_URL}/api/destinations/...`)
+      .get(`/api/destinations/${id}`)
       .then((res) => {
         setDestination(res.data);
         setLoading(false);

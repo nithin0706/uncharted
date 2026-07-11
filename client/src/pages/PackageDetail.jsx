@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import axios from "../api";
 import { ArrowLeft, Heart, Clock, MapPin, Star, Check, X } from "lucide-react";
 import {
   getWishlist,
@@ -20,23 +20,30 @@ const PackageDetail = () => {
   const [saving, setSaving] = useState(false);
 
   // Fetch the package itself
-  useEffect(() => {
-    let cancelled = false;
-    axios
-      .get(`/api/packages/${id}`)
-      .then((res) => {
-        if (!cancelled) setPkg(res.data);
-      })
-      .catch((err) => {
-        if (!cancelled) setError(err.message || "Failed to load package");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
+ // Fetch the package itself
+useEffect(() => {
+  let cancelled = false;
+
+  console.log("API URL:", import.meta.env.VITE_API_URL);
+  console.log("Package ID:", id);
+
+  axios
+    .get(`${import.meta.env.VITE_API_URL}/api/packages/${id}`)
+    .then((res) => {
+      if (!cancelled) setPkg(res.data);
+    })
+    .catch((err) => {
+      console.error(err);
+      if (!cancelled) setError(err.message || "Failed to load package");
+    })
+    .finally(() => {
+      if (!cancelled) setLoading(false);
+    });
+
+  return () => {
+    cancelled = true;
+  };
+}, [id]);
 
   // Check if this package is already wishlisted by the logged-in user
   useEffect(() => {

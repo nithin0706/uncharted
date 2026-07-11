@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeftRight } from "lucide-react";
-import axios from "axios";
+import axios from "../api";
 import { useCompare } from "../context/CompareContext";
 import DestinationCard from "../components/DestinationCard";
 import FilterBar, { PRICE_BANDS, DURATION_BANDS } from "../components/FilterBar";
@@ -28,40 +28,52 @@ export default function DestinationsPage() {
     return () => clearTimeout(handle);
   }, [search]);
 
-  // Unfiltered fetch just to populate the location dropdown
+  // Fetch locations
   useEffect(() => {
     let cancelled = false;
+
     async function fetchLocationOptions() {
       try {
-        const res = await axios.get(
-  `${import.meta.env.VITE_NITHIN_API_URL}/api/packages`
-);
+        const res = await axios.get("/api/packages");
+
         if (cancelled) return;
 
         const names = [];
+
         res.data.forEach((pkg) => {
           const dest = pkg.destination;
           if (!dest || typeof dest !== "object") return;
+
           const label = dest.name || dest.location;
           if (label) names.push(label);
         });
 
         setLocationOptions([...new Set(names)]);
-      } catch {}
+      } catch (err) {
+        console.error(err);
+      }
     }
+
     fetchLocationOptions();
-    return () => { cancelled = true; };
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
+  // Fetch packages
   useEffect(() => {
     let cancelled = false;
+
     async function fetchPackages() {
       try {
         setLoading(true);
+
         const priceBand = PRICE_BANDS[priceBandIndex];
         const durationBand = DURATION_BANDS[durationBandIndex];
 
         const params = {};
+
         if (debouncedSearch) params.search = debouncedSearch;
         if (location) params.location = location;
         if (priceBand.min > 0) params.priceMin = priceBand.min;
@@ -69,22 +81,31 @@ export default function DestinationsPage() {
         if (durationBand.min > 0) params.durationMin = durationBand.min;
         if (durationBand.max !== Infinity) params.durationMax = durationBand.max;
 
-       const res = await axios.get(
-  `${import.meta.env.VITE_NITHIN_API_URL}/api/packages`,
-  { params }
-);
+        const res = await axios.get("/api/packages", {
+          params,
+        });
+
         if (!cancelled) {
           setPackages(res.data);
           setError(null);
         }
       } catch (err) {
-        if (!cancelled) setError(err.message || "Failed to load packages");
+        if (!cancelled) {
+          console.error(err);
+          setError(err.message || "Failed to load packages");
+        }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     }
+
     fetchPackages();
-    return () => { cancelled = true; };
+
+    return () => {
+      cancelled = true;
+    };
   }, [debouncedSearch, location, priceBandIndex, durationBandIndex]);
 
   return (
@@ -111,7 +132,9 @@ export default function DestinationsPage() {
       />
 
       {loading && (
-        <p className="text-[#9A958A] text-center py-16">Loading packages…</p>
+        <p className="text-[#9A958A] text-center py-16">
+          Loading packages…
+        </p>
       )}
 
       {error && (
@@ -122,7 +145,7 @@ export default function DestinationsPage() {
 
       {!loading && !error && packages.length === 0 && (
         <p className="text-[#9A958A] text-center py-16">
-          No packages match your filters. Try widening your search.
+          No packages match your filters.
         </p>
       )}
 
@@ -137,7 +160,7 @@ export default function DestinationsPage() {
       {compareList.length > 0 && (
         <Link
           to="/compare"
-          className="fixed bottom-8 right-8 z-40 bg-[#C9A227] text-[#0B0B0F] px-6 py-3 rounded-full shadow-lg flex items-center gap-2 font-semibold hover:bg-[#E8C766] active:scale-95 transition-all"
+          className="fixed bottom-8 right-8 z-40 bg-[#C9A227] text-[#0B0B0F] px-6 py-3 rounded-full shadow-lg flex items-center gap-2 font-semibold hover:bg-[#E8C766]"
         >
           <ArrowLeftRight size={18} />
           Compare ({compareList.length})
