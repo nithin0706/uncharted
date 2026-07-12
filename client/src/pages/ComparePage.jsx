@@ -46,7 +46,7 @@ const ComparePage = () => {
 
       try {
         const res = await fetch(
-  `${import.meta.env.VITE_NITHIN_API_URL}/api/packages/compare?ids=${compareList.join(",")}`
+  `${import.meta.env.VITE_API_URL}/api/packages/compare?ids=${compareList.join(",")}`
 );
 
         if (!res.ok) {

@@ -85,35 +85,6 @@ const getPackageById = async (req, res) => {
   }
 };
 
-const getPackagesForComparison = async (req, res) => {
-  try {
-    const { ids } = req.query;
-
-    if (!ids) {
-      return res.status(400).json({
-        message: "Package IDs are required",
-      });
-    }
-
-    const packageIds = ids
-      .split(",")
-      .filter((id) => mongoose.Types.ObjectId.isValid(id));
-
-    const packages = await Package.find({
-      _id: { $in: packageIds },
-    }).populate("destination", "name location");
-
-    return res.status(200).json(packages);
-  } catch (error) {
-    console.error("Compare Error:", error);
-
-    return res.status(500).json({
-      message: "Server error",
-      error: error.message,
-    });
-  }
-};
-
 const updatePackage = async (req, res) => {
   try {
     const package_ = await Package.findByIdAndUpdate(
@@ -162,22 +133,45 @@ const deletePackage = async (req, res) => {
       error: error.message,
     });
   }
-};const comparePackages = async (req, res) => {
-    try {
-        const { ids } = req.query;
-
-        if (!ids) {
-            return res.status(400).json({ message: "No package ids provided" });
-        }
-
-        const idArray = ids.split(",").map((id) => id.trim());
-
-        const packages = await Package.find({ _id: { $in: idArray } }).populate("destination", "name location");
-
-        res.status(200).json(packages);
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
 };
 
-module.exports = { createPackage, getPackages, getPackageById, updatePackage, deletePackage, comparePackages };
+const comparePackages = async (req, res) => {
+  try {
+    console.log("COMPARE HIT");
+    console.log("Query:", req.query);
+
+    const { ids } = req.query;
+
+    if (!ids) {
+      return res.status(400).json({ message: "No package ids provided" });
+    }
+
+    const idArray = ids
+      .split(",")
+      .map((id) => id.trim())
+      .filter((id) => mongoose.Types.ObjectId.isValid(id));
+
+    console.log("Parsed idArray:", idArray);
+
+    const packages = await Package.find({
+      _id: { $in: idArray },
+    }).populate("destination", "name location");
+
+    res.status(200).json(packages);
+  } catch (error) {
+    console.error("COMPARE ERROR:", error);
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = {
+  createPackage,
+  getPackages,
+  getPackageById,
+  updatePackage,
+  deletePackage,
+  comparePackages,
+};

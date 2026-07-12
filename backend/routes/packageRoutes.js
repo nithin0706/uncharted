@@ -11,7 +11,8 @@ const {
 
 router.post("/", createPackage);
 router.get("/", getPackages);
-router.get("/compare", comparePackages);   // must be before /:id
+//router.get("/compare", comparePackages);   // must be before /:id
+router.get("/compare", comparePackages);
 router.get("/:id", getPackageById);
 router.put("/:id", updatePackage);
 router.delete("/:id", deletePackage);
