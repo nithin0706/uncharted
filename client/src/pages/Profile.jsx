@@ -1,46 +1,96 @@
-import { useEffect, useState } from "react";
-import { getProfile } from "../services/authService";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
+import "./../styles/Login.css";
 
-function Profile() {
-  const [user, setUser] = useState(null);
+const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
+
+function Login() {
   const navigate = useNavigate();
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = localStorage.getItem("token");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-        const response = await getProfile(token);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
 
-        setUser(response.data.user);
-      } catch (error) {
-        console.error(error);
+    if (!email || !password) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API_BASE}/auth/login`, {
+        email,
+        password,
+      });
+
+      localStorage.setItem("token", res.data.token);
+
+      if (res.data.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
       }
-    };
 
-    fetchProfile();
-  }, []);
+      console.log("Login successful:", res.data);
 
-  const handleLogout = () => {
-  localStorage.removeItem("token");
-  navigate("/");
-};
-
-  if (!user) {
-    return <h2>Loading...</h2>;
-  }
+      const role = res.data.user?.role;
+      if (role === "admin") {
+        navigate("/admin");
+      } else {
+        // FIX: Redirect straight to the profile page instead of the landing page
+        navigate("/profile");
+      }
+    } catch (err) {
+      if (err.response?.status === 400 || err.response?.status === 401) {
+        setError("Invalid email or password.");
+      } else {
+        setError("Could not reach the backend. Make sure it's running on port 5000.");
+      }
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div>
-      <h1>Profile Page</h1>
+    <div className="login-container">
+      <div className="login-card">
+        <h1 className="login-title">Welcome Back</h1>
+        <p className="login-subtitle">Sign in to continue your journey</p>
 
-      <p>Name: {user.name}</p>
-      <p>Email: {user.email}</p>
-      <p>Role: {user.role}</p>
+        <form className="login-form" onSubmit={handleSubmit}>
+          <div className="login-field">
+            <label>Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+            />
+          </div>
 
-      <button onClick={handleLogout}>Logout</button>
+          <div className="login-field">
+            <label>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+            />
+          </div>
+
+          {error && <p className="login-error">{error}</p>}
+
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
 
-export default Profile;
+export default Login;

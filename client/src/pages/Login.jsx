@@ -1,10 +1,10 @@
-import { loginUser } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import "./../styles/Login.css";
 
 const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
+
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -40,7 +40,8 @@ function Login() {
       if (role === "admin") {
         navigate("/admin");
       } else {
-        navigate("/");
+        // FIX: Redirect straight to the profile page instead of the landing page
+        navigate("/profile");
       }
     } catch (err) {
       if (err.response?.status === 400 || err.response?.status === 401) {
