@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { registerUser } from "../services/authService";
 
 function Register() {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,6 +25,7 @@ function Register() {
 
       console.log(response.data);
       alert("Registration Successful");
+      navigate("/login");
     } catch (error) {
       console.error(error.response?.data);
       alert(error.response?.data?.message || "Registration Failed");
@@ -30,78 +33,51 @@ function Register() {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "80vh",
-        color: "#fff",
-        fontFamily: "sans-serif",
-      }}
-    >
-      <h1>Register Page</h1>
-
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "15px",
-          width: "100%",
-          maxWidth: "300px",
-        }}
-      >
-        <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <label>Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #444", backgroundColor: "#111", color: "#fff" }}
-          />
-        </div>
-
-        <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #444", backgroundColor: "#111", color: "#fff" }}
-          />
-        </div>
-
-        <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #444", backgroundColor: "#111", color: "#fff" }}
-          />
-        </div>
-
-        <button
-          type="submit"
-          style={{
-            backgroundColor: "#dfb134",
-            color: "#000",
-            border: "none",
-            padding: "10px 20px",
-            fontSize: "16px",
-            fontWeight: "bold",
-            borderRadius: "5px",
-            cursor: "pointer",
-            marginTop: "10px",
-            width: "100%"
-          }}
-        >
+    <div className="min-h-screen flex items-center justify-center bg-black px-4">
+      <div className="w-full max-w-sm bg-white/5 border border-white/10 rounded-xl p-8">
+        <h1 className="text-2xl font-serif font-bold text-[#E8C766] mb-6 text-center">
           Register
-        </button>
-      </form>
+        </h1>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div>
+            <label className="block text-sm text-[#E8C766]/80 mb-1">Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-white focus:outline-none focus:border-[#C9A227]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-[#E8C766]/80 mb-1">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-white focus:outline-none focus:border-[#C9A227]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-[#E8C766]/80 mb-1">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-white focus:outline-none focus:border-[#C9A227]"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="mt-2 bg-[#C9A227] text-white py-2 rounded-lg font-semibold hover:bg-[#E8C766] transition-all"
+          >
+            Register
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
