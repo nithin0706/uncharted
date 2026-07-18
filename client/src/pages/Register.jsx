@@ -24,22 +24,18 @@ function Register() {
       });
 
       console.log("Backend response:", response.data);
-      alert("Registration Successful");
-      
-      // Extract the token dynamically based on standard backend response nesting
-      const token = response.data?.token || response.data?.data?.token;
-      
+
+      const token = response.data?.token;
+
       if (token) {
         localStorage.setItem("token", token);
+        alert("Registration Successful");
+        navigate("/profile");
       } else {
-        console.warn("No token found in response. Verify Nithin's backend payload structure.");
-        // Optional safety net: sets a dummy flag if the route strictly guards via item existence
-        localStorage.setItem("token", "registered_authenticated"); 
+        console.error("No token in response:", response.data);
+        alert("Registered but login failed — try signing in manually");
+        navigate("/login");
       }
-      
-      // Redirect straight to Nandana's built profile route
-      navigate("/profile");
-      
     } catch (error) {
       console.error(error.response?.data);
       alert(error.response?.data?.message || "Registration Failed");
