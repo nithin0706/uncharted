@@ -35,7 +35,6 @@ export default function TopAppBar() {
           Compare
         </Link>
 
-
         <Link
           to="/guides"
           className="text-[#E8C766]/80 hover:text-white transition-colors inline-flex items-center gap-1"
@@ -53,14 +52,21 @@ export default function TopAppBar() {
         </Link>
       </nav>
 
-      {/* Sign In */}
-      <div className="flex items-center">
+      {/* Sign In / Register */}
+      <div className="flex items-center gap-3">
         <Link
           to="/login"
+          className="text-[#E8C766]/80 hover:text-white transition-colors font-semibold"
+        >
+          Sign In
+        </Link>
+
+        <Link
+          to="/register"
           className="bg-[#C9A227] text-white px-5 py-2 rounded-lg font-semibold hover:bg-[#E8C766] transition-all inline-flex items-center gap-2 shadow-md"
         >
           <User size={16} className="stroke-[2.5]" />
-          <span>Sign In</span>
+          <span>Register</span>
         </Link>
       </div>
     </header>
