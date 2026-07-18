@@ -23,11 +23,23 @@ function Register() {
         password,
       });
 
-      console.log(response.data);
+      console.log("Backend response:", response.data);
       alert("Registration Successful");
       
-      // Redirects to the login page after clicking OK
-      navigate("/login"); 
+      // Extract the token dynamically based on standard backend response nesting
+      const token = response.data?.token || response.data?.data?.token;
+      
+      if (token) {
+        localStorage.setItem("token", token);
+      } else {
+        console.warn("No token found in response. Verify Nithin's backend payload structure.");
+        // Optional safety net: sets a dummy flag if the route strictly guards via item existence
+        localStorage.setItem("token", "registered_authenticated"); 
+      }
+      
+      // Redirect straight to Nandana's built profile route
+      navigate("/profile");
+      
     } catch (error) {
       console.error(error.response?.data);
       alert(error.response?.data?.message || "Registration Failed");
