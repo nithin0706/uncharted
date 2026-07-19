@@ -12,7 +12,7 @@ const Reviews = () => {
 
     const fetchReviews = async () => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/reviews`)
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/reviews/${packageId}`)
             setReviewData(res.data);
             setLoading(false);
         } catch (err) {

@@ -1,11 +1,18 @@
 const Booking = require("../models/Booking");
-const Package = require("../models/package");
+const Package = require("../models/Package"); // Matches case-sensitive paths exactly
 
 const createBooking = async (req, res) => {
     try {
         const { packageId, travelDate, numberOfPeople } = req.body;
 
-        const userId = req.user.id;
+        // Extracts ID correctly regardless of passport/JWT middleware naming conventions
+        const userId = req.user?.id || req.user?._id;
+
+        if (!userId) {
+            return res.status(401).json({
+                message: "Unauthorized: User information missing from request session"
+            });
+        }
 
         const packageExists = await Package.findById(packageId);
 

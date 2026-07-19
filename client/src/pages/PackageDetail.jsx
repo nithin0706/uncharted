@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "../api";
-import { ArrowLeft, Heart, Clock, MapPin, Star, Check, X } from "lucide-react";
+import { ArrowLeft, Heart, Clock, MapPin, Star, Check, X, MessageSquare, CalendarCheck } from "lucide-react";
 import {
   getWishlist,
   addToWishlist,
   removeWishlistItem,
 } from "../services/wishlistService";
+import { createBooking } from "../services/bookingService";
 
 const PackageDetail = () => {
   const { id } = useParams();
@@ -19,31 +20,34 @@ const PackageDetail = () => {
   const [wishlistId, setWishlistId] = useState(null);
   const [saving, setSaving] = useState(false);
 
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [numberOfPeople, setNumberOfPeople] = useState(1);
+  const [booking, setBooking] = useState(false);
+
   // Fetch the package itself
- // Fetch the package itself
-useEffect(() => {
-  let cancelled = false;
+  useEffect(() => {
+    let cancelled = false;
 
-  console.log("API URL:", import.meta.env.VITE_API_URL);
-  console.log("Package ID:", id);
+    console.log("API URL:", import.meta.env.VITE_API_URL);
+    console.log("Package ID:", id);
 
-  axios
-    .get(`${import.meta.env.VITE_API_URL}/api/packages/${id}`)
-    .then((res) => {
-      if (!cancelled) setPkg(res.data);
-    })
-    .catch((err) => {
-      console.error(err);
-      if (!cancelled) setError(err.message || "Failed to load package");
-    })
-    .finally(() => {
-      if (!cancelled) setLoading(false);
-    });
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/packages/${id}`)
+      .then((res) => {
+        if (!cancelled) setPkg(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+        if (!cancelled) setError(err.message || "Failed to load package");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
 
-  return () => {
-    cancelled = true;
-  };
-}, [id]);
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
   // Check if this package is already wishlisted by the logged-in user
   useEffect(() => {
@@ -90,6 +94,35 @@ useEffect(() => {
       alert("Failed to update wishlist");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleBooking = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    if (!selectedDate) {
+      alert("Please select a travel date");
+      return;
+    }
+
+    setBooking(true);
+    try {
+      await createBooking(
+        { packageId: id, travelDate: selectedDate, numberOfPeople },
+        token
+      );
+      alert("Booking successful!");
+      navigate("/profile");
+    } catch (err) {
+      // Clean verbose error log for backend response tracing
+      console.error("Booking error:", err.response?.data || err.message);
+      alert(err.response?.data?.message || "Booking failed");
+    } finally {
+      setBooking(false);
     }
   };
 
@@ -226,26 +259,81 @@ useEffect(() => {
           )}
         </div>
 
+        {/* ── Reviews Redirection Action ── */}
+        <div className="mb-10 p-6 bg-[#16161C] border border-[#25252d] rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <h3 className="text-lg font-semibold text-[#F5F1E8] mb-1">Traveler Experiences</h3>
+            <p className="text-sm text-[#9A958A]">See what other explorers are saying about this journey.</p>
+          </div>
+          <button
+            onClick={() => navigate(`/reviews/${id}`)}
+            className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 bg-[#C9A227] hover:bg-[#E8C766] text-black font-semibold rounded-lg shadow-lg transition-all"
+          >
+            <MessageSquare size={18} />
+            View Reviews
+          </button>
+        </div>
+
         {/* ── Travel dates ── */}
         {pkg.travelDates?.length > 0 && (
-          <section className="mb-10">
+          <section className="mb-6">
             <h2 className="text-xl font-semibold mb-4">Available Travel Dates</h2>
             <div className="flex flex-wrap gap-2">
-              {pkg.travelDates.map((d, i) => (
-                <span
-                  key={i}
-                  className="text-sm bg-[#16161C] border border-[#25252d] text-[#F5F1E8] px-3 py-1.5 rounded-full"
-                >
-                  {new Date(d).toLocaleDateString("en-IN", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </span>
-              ))}
+              {pkg.travelDates.map((d, i) => {
+                const isSelected = selectedDate === d;
+                return (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedDate(d)}
+                    className={`text-sm border px-3 py-1.5 rounded-full transition-colors ${
+                      isSelected
+                        ? "bg-[#C9A227] text-black border-[#C9A227]"
+                        : "bg-[#16161C] border-[#25252d] text-[#F5F1E8] hover:border-[#C9A227]"
+                    }`}
+                  >
+                    {new Date(d).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </button>
+                );
+              })}
             </div>
           </section>
         )}
+
+        {/* ── Number of people ── */}
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold mb-3">Number of People</h2>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setNumberOfPeople((n) => Math.max(1, n - 1))}
+              className="w-10 h-10 rounded-full bg-[#16161C] border border-[#25252d] text-[#C9A227] font-bold text-xl hover:border-[#C9A227] transition-colors"
+            >
+              −
+            </button>
+            <span className="text-lg font-semibold">{numberOfPeople}</span>
+            <button
+              onClick={() => setNumberOfPeople((n) => n + 1)}
+              className="w-10 h-10 rounded-full bg-[#16161C] border border-[#25252d] text-[#C9A227] font-bold text-xl hover:border-[#C9A227] transition-colors"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        {/* ── Book Now Form Submission Button ── */}
+        <div className="mb-12">
+          <button
+            onClick={handleBooking}
+            disabled={booking}
+            className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-[#C9A227] hover:bg-[#E8C766] text-black font-bold text-lg rounded-xl shadow-lg transition-all disabled:opacity-50"
+          >
+            <CalendarCheck size={20} />
+            {booking ? "Booking..." : "Book Now"}
+          </button>
+        </div>
 
         {/* ── Extra gallery images ── */}
         {pkg.images?.length > 1 && (
