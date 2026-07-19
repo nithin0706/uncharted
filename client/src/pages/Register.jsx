@@ -46,75 +46,137 @@ function Register() {
     <div
       style={{
         display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
         justifyContent: "center",
-        minHeight: "80vh",
-        color: "#fff",
+        alignItems: "center", 
+        minHeight: "100vh", 
         fontFamily: "sans-serif",
+        color: "#fff",
+        padding: "100px 20px 40px", 
+        boxSizing: "border-box",
       }}
     >
-      <h1>Register Page</h1>
-
-      <form
-        onSubmit={handleSubmit}
+      <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "15px",
+          backgroundColor: "#111111",
+          border: "1px solid #222",
+          borderRadius: "12px",
+          padding: "40px",
           width: "100%",
-          maxWidth: "300px",
+          maxWidth: "400px",
+          boxShadow: "0 8px 24px rgba(0, 0, 0, 0.5)",
+          textAlign: "center",
         }}
       >
-        <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <label>Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #444", backgroundColor: "#111", color: "#fff" }}
-          />
-        </div>
-
-        <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #444", backgroundColor: "#111", color: "#fff" }}
-          />
-        </div>
-
-        <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #444", backgroundColor: "#111", color: "#fff" }}
-          />
-        </div>
-
-        <button
-          type="submit"
+        <h1 style={{ margin: "0 0 5px 0", fontSize: "28px", color: "#fff" }}>
+          Create Account
+        </h1>
+        <p
           style={{
-            backgroundColor: "#dfb134",
-            color: "#000",
-            border: "none",
-            padding: "10px 20px",
-            fontSize: "16px",
+            margin: "0 0 25px 0",
+            color: "#dfb134",
+            fontSize: "14px",
+            textTransform: "uppercase",
+            letterSpacing: "1px",
             fontWeight: "bold",
-            borderRadius: "5px",
-            cursor: "pointer",
-            marginTop: "10px",
-            width: "100%"
           }}
         >
-          Register
-        </button>
-      </form>
+          Join Your Journey
+        </p>
+
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+            width: "100%",
+          }}
+        >
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+            {/* Updated heading color to yellow */}
+            <label style={{ fontSize: "14px", color: "#dfb134", marginBottom: "6px", fontWeight: "600" }}>Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your Name"
+              style={{
+                width: "100%",
+                padding: "12px",
+                borderRadius: "6px",
+                border: "1px solid #2a2a2a",
+                backgroundColor: "#1a1a1a",
+                color: "#fff",
+                boxSizing: "border-box",
+                fontSize: "15px",
+              }}
+            />
+          </div>
+
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+            {/* Updated heading color to yellow */}
+            <label style={{ fontSize: "14px", color: "#dfb134", marginBottom: "6px", fontWeight: "600" }}>Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              style={{
+                width: "100%",
+                padding: "12px",
+                borderRadius: "6px",
+                border: "1px solid #2a2a2a",
+                backgroundColor: "#1a1a1a",
+                color: "#fff",
+                boxSizing: "border-box",
+                fontSize: "15px",
+              }}
+            />
+          </div>
+
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+            {/* Updated heading color to yellow */}
+            <label style={{ fontSize: "14px", color: "#dfb134", marginBottom: "6px", fontWeight: "600" }}>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              style={{
+                width: "100%",
+                padding: "12px",
+                borderRadius: "6px",
+                border: "1px solid #2a2a2a",
+                backgroundColor: "#1a1a1a",
+                color: "#fff",
+                boxSizing: "border-box",
+                fontSize: "15px",
+              }}
+            />
+          </div>
+
+          <button
+            type="submit"
+            style={{
+              backgroundColor: "#dfb134",
+              color: "#000",
+              border: "none",
+              padding: "12px 24px",
+              fontSize: "16px",
+              fontWeight: "bold",
+              borderRadius: "6px",
+              cursor: "pointer",
+              marginTop: "10px",
+              width: "100%",
+              transition: "opacity 0.2s ease",
+            }}
+            onMouseEnter={(e) => (e.target.style.opacity = "0.9")}
+            onMouseLeave={(e) => (e.target.style.opacity = "1")}
+          >
+            Register
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

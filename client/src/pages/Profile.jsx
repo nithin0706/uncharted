@@ -1,96 +1,75 @@
+import { useEffect, useState } from "react";
+import { getProfile } from "../services/authService";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import axios from "axios";
-import "./../styles/Login.css";
 
-const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
-
-function Login() {
+function Profile() {
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
 
-    if (!email || !password) {
-      alert("Please fill all fields");
-      return;
-    }
+        if (!token) {
+          navigate("/login");
+          return;
+        }
 
-    setLoading(true);
-    try {
-      const res = await axios.post(`${API_BASE}/auth/login`, {
-        email,
-        password,
-      });
-
-      localStorage.setItem("token", res.data.token);
-
-      if (res.data.user) {
-        localStorage.setItem("user", JSON.stringify(res.data.user));
+        const response = await getProfile(token);
+        setUser(response.data.user);
+      } catch (error) {
+        console.error(error);
+        navigate("/login");
       }
+    };
+    fetchProfile();
+  }, [navigate]);
 
-      console.log("Login successful:", res.data);
-
-      const role = res.data.user?.role;
-      if (role === "admin") {
-        navigate("/admin");
-      } else {
-        // FIX: Redirect straight to the profile page instead of the landing page
-        navigate("/profile");
-      }
-    } catch (err) {
-      if (err.response?.status === 400 || err.response?.status === 401) {
-        setError("Invalid email or password.");
-      } else {
-        setError("Could not reach the backend. Make sure it's running on port 5000.");
-      }
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
   };
 
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        Loading...
+      </div>
+    );
+  }
+
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <h1 className="login-title">Welcome Back</h1>
-        <p className="login-subtitle">Sign in to continue your journey</p>
-
-        <form className="login-form" onSubmit={handleSubmit}>
-          <div className="login-field">
-            <label>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-            />
+    <div className="min-h-screen flex items-center justify-center bg-black px-4 pt-24">
+      <div className="w-full max-w-sm bg-white/5 border border-white/10 rounded-xl p-8">
+        <div className="flex flex-col items-center mb-6">
+          <div className="w-20 h-20 rounded-full bg-[#C9A227] flex items-center justify-center text-3xl font-bold text-black mb-4">
+            {user.name?.[0]?.toUpperCase()}
           </div>
+          <h1 className="text-2xl font-serif font-bold text-[#E8C766]">
+            {user.name}
+          </h1>
+          <span className="text-xs uppercase tracking-wide text-[#C9A227]/70 mt-1">
+            {user.role}
+          </span>
+        </div>
 
-          <div className="login-field">
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-            />
+        <div className="flex flex-col gap-3 text-white mb-6">
+          <div>
+            <p className="text-sm text-[#E8C766]/70">Email</p>
+            <p>{user.email}</p>
           </div>
+        </div>
 
-          {error && <p className="login-error">{error}</p>}
-
-          <button type="submit" className="login-btn" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
+        <button
+          onClick={handleLogout}
+          className="w-full bg-[#C9A227] text-white py-2 rounded-lg font-semibold hover:bg-[#E8C766] transition-all"
+        >
+          Logout
+        </button>
       </div>
     </div>
   );
 }
 
-export default Login;
+export default Profile;
