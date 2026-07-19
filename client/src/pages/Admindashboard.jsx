@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./Admindashboard.css";
 
-// Real backend base URL (your project's backend port)
 const API_BASE = `${import.meta.env.VITE_API_URL}/api/admin`;
 
-// Creates an axios instance that automatically attaches the admin's auth token
 function getApi() {
   const token = localStorage.getItem("token");
   return axios.create({
@@ -17,8 +15,7 @@ function getApi() {
 }
 
 function AdminDashboard() {
-  const [tab, setTab] = useState("users"); // "users" | "reviews"
-
+  const [tab, setTab] = useState("users");
   const [users, setUsers] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -53,13 +50,12 @@ function AdminDashboard() {
     } else if (err.response?.status === 403) {
       setLoadError("You're logged in, but not as an admin (403).");
     } else {
-      setLoadError(
-        "Could not reach the backend. Make sure the server is running on port 5001."
-      );
+      setLoadError("Could not reach the backend. Make sure the server is running on port 5001.");
     }
   }
 
   async function handleDeleteUser(userId) {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
     setActionError("");
     const prev = users;
     setUsers((curr) => curr.filter((u) => u._id !== userId));
@@ -74,14 +70,13 @@ function AdminDashboard() {
 
   async function handleApproveReview(reviewId) {
     setActionError("");
-    const prev = reviews;
     try {
-      const res = await getApi().patch(`/reviews/${reviewId}/approve`);
+      await getApi().patch(`/reviews/${reviewId}/approve`);
+      // Update only status to preserve populated user and package details
       setReviews((curr) =>
-        curr.map((r) => (r._id === reviewId ? res.data : r))
+        curr.map((r) => (r._id === reviewId ? { ...r, status: "approved" } : r))
       );
     } catch (err) {
-      setReviews(prev);
       setActionError("Could not approve review — check console for details.");
       console.error(err);
     }
@@ -89,20 +84,20 @@ function AdminDashboard() {
 
   async function handleRejectReview(reviewId) {
     setActionError("");
-    const prev = reviews;
     try {
-      const res = await getApi().patch(`/reviews/${reviewId}/reject`);
+      await getApi().patch(`/reviews/${reviewId}/reject`);
+      // Update only status to preserve populated user and package details
       setReviews((curr) =>
-        curr.map((r) => (r._id === reviewId ? res.data : r))
+        curr.map((r) => (r._id === reviewId ? { ...r, status: "rejected" } : r))
       );
     } catch (err) {
-      setReviews(prev);
       setActionError("Could not reject review — check console for details.");
       console.error(err);
     }
   }
 
   async function handleDeleteReview(reviewId) {
+    if (!window.confirm("Are you sure you want to delete this review?")) return;
     setActionError("");
     const prev = reviews;
     setReviews((curr) => curr.filter((r) => r._id !== reviewId));

@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { getProfile } from "../services/authService";
-import { getBookingHistory } from "../services/bookingService";
+import { getBookingHistory, cancelBooking } from "../services/bookingService";
 import { getWishlist } from "../services/wishlistService";
 import { useNavigate, Link } from "react-router-dom";
 import { useCompare } from "../context/CompareContext";
-import { Backpack, Heart, ArrowLeftRight, LogOut } from "lucide-react";
+import { Backpack, Heart, ArrowLeftRight, LogOut, XCircle } from "lucide-react";
 
 function Profile() {
   const [user, setUser] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [wishlistCount, setWishlistCount] = useState(0);
+  const [cancellingId, setCancellingId] = useState(null);
   const navigate = useNavigate();
   const { compareList } = useCompare();
 
@@ -40,6 +41,29 @@ function Profile() {
     fetchAll();
   }, [navigate]);
 
+  const handleCancel = async (bookingId) => {
+    if (!window.confirm("Are you sure you want to cancel this booking?")) return;
+
+    const token = localStorage.getItem("token");
+    setCancellingId(bookingId);
+
+    try {
+      await cancelBooking(bookingId, token);
+      
+      setBookings((prev) =>
+        prev.map((b) =>
+          b._id === bookingId ? { ...b, bookingStatus: "Cancelled" } : b
+        )
+      );
+      alert("Booking cancelled successfully.");
+    } catch (error) {
+      console.error("Cancellation error:", error);
+      alert(error.response?.data?.message || "Failed to cancel booking.");
+    } finally {
+      setCancellingId(null);
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/");
@@ -52,6 +76,9 @@ function Profile() {
       </div>
     );
   }
+
+  // Filter to compute active bookings count
+  const activeBookingsCount = bookings.filter((b) => b.bookingStatus !== "Cancelled").length;
 
   return (
     <div className="min-h-screen bg-black px-4 pt-24 pb-16">
@@ -77,7 +104,7 @@ function Profile() {
             className="bg-white/5 border border-white/10 rounded-xl p-4 text-center hover:border-[#C9A227] transition-colors"
           >
             <Backpack size={20} className="text-[#C9A227] mx-auto mb-1" />
-            <p className="text-lg font-bold text-white">{bookings.length}</p>
+            <p className="text-lg font-bold text-white">{activeBookingsCount}</p>
             <p className="text-xs text-[#9A958A]">Bookings</p>
           </a>
           <Link
@@ -108,7 +135,7 @@ function Profile() {
               {bookings.map((b) => (
                 <div
                   key={b._id}
-                  className="bg-white/5 border border-white/10 rounded-xl p-4 flex justify-between items-center"
+                  className="bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                 >
                   <div>
                     <p className="text-white font-semibold">
@@ -123,15 +150,29 @@ function Profile() {
                       · {b.numberOfPeople} {b.numberOfPeople === 1 ? "person" : "people"}
                     </p>
                   </div>
-                  <span
-                    className={`text-xs px-3 py-1 rounded-full ${
-                      b.bookingStatus === "Cancelled"
-                        ? "bg-red-500/20 text-red-400"
-                        : "bg-[#C9A227]/20 text-[#C9A227]"
-                    }`}
-                  >
-                    {b.bookingStatus}
-                  </span>
+                  
+                  <div className="flex items-center gap-3 self-end sm:self-center">
+                    <span
+                      className={`text-xs px-3 py-1 rounded-full ${
+                        b.bookingStatus === "Cancelled"
+                          ? "bg-red-500/20 text-red-400"
+                          : "bg-[#C9A227]/20 text-[#C9A227]"
+                      }`}
+                    >
+                      {b.bookingStatus}
+                    </span>
+
+                    {b.bookingStatus !== "Cancelled" && (
+                      <button
+                        onClick={() => handleCancel(b._id)}
+                        disabled={cancellingId === b._id}
+                        className="flex items-center gap-1 text-xs text-black font-semibold bg-[#C9A227] hover:bg-[#E8C766] px-3 py-1 rounded-lg transition-all disabled:opacity-50"
+                      >
+                        <XCircle size={14} />
+                        {cancellingId === b._id ? "Cancelling..." : "Cancel Trip"}
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

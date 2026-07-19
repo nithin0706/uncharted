@@ -11,3 +11,10 @@ export const getBookingHistory = (userId, token) => {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
+
+// New cancellation function
+export const cancelBooking = (bookingId, token) => {
+  return axios.put(`${import.meta.env.VITE_API_URL}/api/bookings/cancel/${bookingId}`, {}, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};

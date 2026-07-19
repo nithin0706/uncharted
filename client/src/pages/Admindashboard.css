@@ -1,21 +1,30 @@
-.Admin-dashboard {
+.admin-dashboard {
   max-width: 1100px;
-  margin: 2rem auto;
+  /* Changed from 2rem to 8rem to push the dashboard down below the fixed navbar */
+  margin: 8rem auto 2rem auto;
   padding: 2rem;
   font-family: system-ui, sans-serif;
+  background-color: #000000;
+  color: #F5F1E8;
 }
 
-.Admin-dashboard h1 {
-  margin-bottom: 1.5rem;
-  color: #222;
+.admin-dashboard h1 {
+  font-size: 2.5rem; /* Makes the heading significantly larger */
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 2rem;
+  color: #E8C766; /* Themed Gold */
   text-align: center;
+  font-family: serif;
 }
+
+/* ---------- TABS ---------- */
 
 .admin-tabs {
   display: flex;
   gap: 0.75rem;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #25252d;
 }
 
 .admin-tabs .tab {
@@ -24,35 +33,37 @@
   background: transparent;
   cursor: pointer;
   font-size: 1rem;
-  color: #444;
+  color: #9A958A;
   font-weight: 500;
   transition: 0.3s ease;
   border-bottom: 3px solid transparent;
 }
 
 .admin-tabs .tab:hover {
-  color: #1a73e8;
+  color: #E8C766;
 }
 
 .admin-tabs .tab.active {
-  color: #1a73e8;
-  border-bottom-color: #1a73e8;
+  color: #C9A227;
+  border-bottom-color: #C9A227;
   font-weight: 600;
 }
 
+/* ---------- MESSAGES ---------- */
+
 .sample-banner {
-  background: #fff8e1;
-  border: 1px solid #ffe08a;
-  color: #8a6d00;
+  background: #16161C;
+  border: 1px solid #C9A227;
+  color: #E8C766;
   padding: 0.75rem 1rem;
   border-radius: 6px;
   margin-bottom: 1rem;
 }
 
 .action-error {
-  background: #fdecea;
-  border: 1px solid #f5b7b1;
-  color: #a93226;
+  background: #dc3545/20;
+  border: 1px solid #dc3545;
+  color: #f8d7da;
   padding: 0.75rem 1rem;
   border-radius: 6px;
   margin-bottom: 1rem;
@@ -63,36 +74,37 @@
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  background: #ffffff;
-  color: #222;
+  background: #16161C; /* Dark surface matching the theme */
+  color: #F5F1E8;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  border: 1px solid #25252d;
 }
 
 .admin-table th {
-  background: #f5f5f5;
-  color: #222;
+  background: #25252d;
+  color: #E8C766;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
 
 .admin-table td {
-  background: #ffffff;
-  color: #222;
+  background: #16161C;
+  color: #F5F1E8;
 }
 
 .admin-table th,
 .admin-table td {
   text-align: left;
   padding: 1rem;
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid #25252d;
   font-size: 0.95rem;
 }
 
 .admin-table tbody tr:hover td {
-  background: #f8f9fa;
+  background: #1e1e26;
 }
 
 /* ---------- STATUS ---------- */
@@ -108,19 +120,19 @@
 
 .status-pill.active,
 .status-pill.approved {
-  background: #d4edda;
-  color: #1e7e34;
+  background: rgba(40, 167, 69, 0.2);
+  color: #4ade80;
 }
 
 .status-pill.pending {
-  background: #fff3cd;
-  color: #856404;
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
 }
 
 .status-pill.rejected,
 .status-pill.deactivated {
-  background: #f8d7da;
-  color: #721c24;
+  background: rgba(220, 53, 69, 0.2);
+  color: #f87171;
 }
 
 /* ---------- BUTTONS ---------- */
@@ -131,13 +143,13 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
-  font-weight: 500;
+  font-weight: 600;
   transition: 0.2s ease;
   margin-right: 0.4rem;
 }
 
 .action-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
