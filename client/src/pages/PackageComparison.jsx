@@ -88,7 +88,7 @@ const PackageComparison = () => {
     const fetchPackages = async () => {
       try {
         // FIXED: Corrected the broken string literal/backtick syntax
-        const res = await fetch(`${import.meta.env.VITE_NITHIN_API_URL}/api/packages`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/packages`);
         if (!res.ok) throw new Error("Server error");
 
         const data = await res.json();

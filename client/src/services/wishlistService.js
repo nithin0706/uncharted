@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = `${import.meta.env.VITE_NITHIN_API_URL}/api/wishlist`;
+const API_URL = `${import.meta.env.VITE_API_URL}/api/wishlist`;
 
 export const getWishlist = (token) => {
   return axios.get(API_URL, {
