@@ -1,5 +1,5 @@
 // client/src/pages/PackageComparison.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import "./PackageComparison.css";
 
 // ─── Sample fallback data (used when backend is not available) ───────────────
@@ -11,12 +11,14 @@ const SAMPLE_PACKAGES = [
     duration: 5,
     price: 12999,
     ratings: 4.5,
+    reviewCount: 12,
     inclusions: [
       "Hotel stay",
       "Houseboat cruise",
       "All meals",
       "Airport transfer",
     ],
+    exclusions: ["Flight tickets", "Travel insurance"],
     image:
       "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=400&q=80",
   },
@@ -27,6 +29,7 @@ const SAMPLE_PACKAGES = [
     duration: 7,
     price: 18500,
     ratings: 4.8,
+    reviewCount: 20,
     inclusions: [
       "Heritage hotel",
       "Camel safari",
@@ -34,6 +37,7 @@ const SAMPLE_PACKAGES = [
       "Guide",
       "Airport transfer",
     ],
+    exclusions: ["Flight tickets", "Lunch"],
     image:
       "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=400&q=80",
   },
@@ -44,18 +48,19 @@ const SAMPLE_PACKAGES = [
     duration: 4,
     price: 9999,
     ratings: 4.2,
+    reviewCount: 8,
     inclusions: [
       "Beach resort",
       "Breakfast",
       "Water sports",
       "Airport transfer",
     ],
+    exclusions: ["Flight tickets", "Dinner"],
     image:
       "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=400&q=80",
   },
 ];
 
-// Helper to safely get destination name
 function getDestinationLabel(destination) {
   if (!destination) return "";
   if (typeof destination === "string") return destination;
@@ -73,7 +78,6 @@ function Stars({ rating }) {
           ★
         </span>
       ))}
-      <span className="pc-rating-num">{rating.toFixed(1)}</span>
     </span>
   );
 }
@@ -132,32 +136,20 @@ const PackageComparison = () => {
       ? Math.max(...selected.map((p) => p.ratings || 0))
       : null;
 
-  const longestDuration =
-    selected.length > 0
-      ? Math.max(...selected.map((p) => p.duration))
-      : null;
-
-  const cheapestPkg = selected.find((p) => p.price === lowestPrice);
-  const topRatedPkg = selected.find((p) => p.ratings === highestRating);
-  const longestPkg = selected.find((p) => p.duration === longestDuration);
-
-  function getBadges(pkg) {
-    const badges = [];
-
+  function getPrimaryBadge(pkg) {
     if (selected.length >= 2 && pkg.price === lowestPrice) {
-      badges.push({ label: "Best value", key: "value", tone: "green" });
+      return { label: "Best Value", tone: "green", icon: "🏅" };
     }
 
     if (selected.length >= 2 && pkg.ratings === highestRating) {
-      badges.push({ label: "Highest rated", key: "rated", tone: "gold" });
+      return { label: "Highest Rated", tone: "gold", icon: "🏆" };
     }
 
-    if (selected.length >= 2 && pkg.duration === longestDuration) {
-      badges.push({ label: "Longest trip", key: "longest", tone: "blue" });
-    }
-
-    return badges;
+    return null;
   }
+
+  const recommendedPkg =
+    selected.length >= 2 ? selected.find((p) => p.price === lowestPrice) : null;
 
   const rows = [
     {
@@ -172,13 +164,10 @@ const PackageComparison = () => {
     },
     {
       label: "Price",
-      icon: "💰",
+      icon: "₹",
       render: (p) => (
-        <span className={p.price === lowestPrice ? "pc-best-value" : ""}>
+        <span style={p.price === lowestPrice ? { color: "var(--pc-green)", fontWeight: 700 } : undefined}>
           ₹{p.price.toLocaleString("en-IN")}
-          {p.price === lowestPrice && selected.length >= 2 && (
-            <span className="pc-badge">Best value</span>
-          )}
         </span>
       ),
     },
@@ -186,11 +175,11 @@ const PackageComparison = () => {
       label: "Rating",
       icon: "⭐",
       render: (p) => (
-        <span className={p.ratings === highestRating ? "pc-best-value" : ""}>
+        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <Stars rating={p.ratings || 0} />
-          {p.ratings === highestRating && selected.length >= 2 && (
-            <span className="pc-badge">Highest rated</span>
-          )}
+          <span className="pc-rating-num">
+            {(p.ratings || 0).toFixed(1)} ({p.reviewCount ?? 0} reviews)
+          </span>
         </span>
       ),
     },
@@ -198,9 +187,24 @@ const PackageComparison = () => {
       label: "Inclusions",
       icon: "✅",
       render: (p) => (
-        <ul className="pc-inclusions-list">
+        <ul className="pc-check-list">
           {(p.inclusions || []).map((inc, i) => (
-            <li key={i}>✓ {inc}</li>
+            <li key={i}>
+              <span className="pc-check-icon">✓</span> {inc}
+            </li>
+          ))}
+        </ul>
+      ),
+    },
+    {
+      label: "Exclusions",
+      icon: "❌",
+      render: (p) => (
+        <ul className="pc-check-list">
+          {(p.exclusions || []).map((exc, i) => (
+            <li key={i}>
+              <span className="pc-x-icon">✕</span> {exc}
+            </li>
           ))}
         </ul>
       ),
@@ -217,201 +221,163 @@ const PackageComparison = () => {
 
   return (
     <div className="pc-page pt-32">
-      <div className="pc-header">
-        <span className="pc-eyebrow">Uncharted / Compare</span>
-        <h1>Compare packages</h1>
-        <p className="pc-subtitle">
-          Select up to <strong>3 packages</strong> to compare price, rating,
-          duration and what's included, side by side.
-        </p>
-      </div>
-
-      {error && <div className="pc-error">{error}</div>}
-
-      <section className="pc-selector">
-        <h2 className="pc-section-title">Choose packages</h2>
-
-        <div className="pc-cards-grid">
-          {allPackages.map((pkg) => (
-            <div
-              key={pkg._id}
-              className={`pc-card ${isSelected(pkg._id) ? "selected" : ""}`}
-              onClick={() => toggleSelect(pkg)}
-            >
-              <img
-                src={pkg.images?.[0] || pkg.image}
-                alt={pkg.name}
-                className="pc-card-img"
-              />
-
-              <div className="pc-card-body">
-                <h3 className="pc-card-name">{pkg.name}</h3>
-
-                <p className="pc-card-dest">
-                  📍 {getDestinationLabel(pkg.destination)}
-                </p>
-
-                <div className="pc-card-footer">
-                  <span className="pc-card-price">
-                    ₹{pkg.price.toLocaleString("en-IN")}
-                  </span>
-
-                  <span className="pc-card-days">{pkg.duration} days</span>
-                </div>
-              </div>
-
-              <div className="pc-card-badge">
-                {isSelected(pkg._id) ? "✓ Selected" : "+ Compare"}
-              </div>
+      <div className="pc-container">
+        <div className="pc-hero-banner">
+          <div className="pc-hero-left">
+            <span className="pc-hero-icon">⚖️</span>
+            <div>
+              <h1 className="pc-hero-title">Compare Packages</h1>
+              <p className="pc-hero-subtitle">
+                Select up to 3 packages to compare price, rating, duration
+                and what's included.
+              </p>
             </div>
-          ))}
+          </div>
         </div>
-      </section>
 
-      {selected.length >= 2 && (
-        <>
-          <div className="pc-strip">
-            {selected.map((pkg, i) => (
+        {error && <div className="pc-error">{error}</div>}
+
+        <section className="pc-selector">
+          <h2 className="pc-section-title">Choose packages</h2>
+
+          <div className="pc-cards-grid">
+            {allPackages.map((pkg) => (
               <div
                 key={pkg._id}
-                className="pc-strip-card"
-                style={{ animationDelay: `${i * 0.05}s` }}
+                className={`pc-card ${isSelected(pkg._id) ? "selected" : ""}`}
+                onClick={() => toggleSelect(pkg)}
               >
-                <div className="pc-strip-img-wrap">
-                  <img
-                    src={pkg.images?.[0] || pkg.image}
-                    alt={pkg.name}
-                    className="pc-strip-img"
-                  />
-                  <div className="pc-strip-img-overlay" />
-                  <button
-                    className="pc-strip-remove"
-                    onClick={() => toggleSelect(pkg)}
-                  >
-                    ✕ Remove
-                  </button>
-                </div>
+                <img
+                  src={pkg.images?.[0] || pkg.image}
+                  alt={pkg.name}
+                  className="pc-card-img"
+                />
 
-                <div className="pc-strip-body">
-                  <h3 className="pc-strip-name">{pkg.name}</h3>
-                  <p className="pc-strip-meta">
+                <div className="pc-card-body">
+                  <h3 className="pc-card-name">{pkg.name}</h3>
+
+                  <p className="pc-card-dest">
                     📍 {getDestinationLabel(pkg.destination)}
                   </p>
 
-                  <div className="pc-strip-footer">
-                    <span className="pc-strip-price">
+                  <div className="pc-card-footer">
+                    <span className="pc-card-price">
                       ₹{pkg.price.toLocaleString("en-IN")}
                     </span>
-                    <span className="pc-strip-days">{pkg.duration} days</span>
-                  </div>
 
-                  <div className="pc-strip-badges">
-                    {getBadges(pkg).map((badge) => (
-                      <span
-                        key={badge.key}
-                        className={`pc-pill pc-pill-${badge.tone}`}
-                      >
-                        {badge.label}
-                      </span>
-                    ))}
+                    <span className="pc-card-days">{pkg.duration} days</span>
                   </div>
+                </div>
+
+                <div className="pc-card-badge">
+                  {isSelected(pkg._id) ? "✓ Selected" : "+ Compare"}
                 </div>
               </div>
             ))}
           </div>
+        </section>
 
-          <div className="pc-stats">
-            {cheapestPkg && (
-              <div className="pc-stat-card">
-                <span className="pc-stat-icon green">💰</span>
-                <div>
-                  <p className="pc-stat-label">Cheapest</p>
-                  <p className="pc-stat-value">{cheapestPkg.name}</p>
-                  <p className="pc-stat-sub">
-                    ₹{cheapestPkg.price.toLocaleString("en-IN")}
-                  </p>
-                </div>
+        {selected.length >= 2 && (
+          <div className="pc-compare-wrap">
+            <div
+              className="pc-compare-grid"
+              style={{ "--cols": selected.length }}
+            >
+              <div className="pc-feat-header">
+                <span className="pc-feat-header-label">Features</span>
+                <span className="pc-feat-divider">— ◇ —</span>
               </div>
-            )}
 
-            {topRatedPkg && (
-              <div className="pc-stat-card">
-                <span className="pc-stat-icon gold">⭐</span>
-                <div>
-                  <p className="pc-stat-label">Highest rated</p>
-                  <p className="pc-stat-value">{topRatedPkg.name}</p>
-                  <p className="pc-stat-sub">
-                    {(topRatedPkg.ratings || 0).toFixed(1)} rating
-                  </p>
+              {selected.map((pkg) => {
+                const badge = getPrimaryBadge(pkg);
+
+                return (
+                  <div key={pkg._id} className="pc-pkg-cell">
+                    <img
+                      src={pkg.images?.[0] || pkg.image}
+                      alt={pkg.name}
+                      className="pc-pkg-cell-img"
+                    />
+                    <div className="pc-pkg-cell-overlay" />
+
+                    <button
+                      className="pc-pkg-cell-remove"
+                      onClick={() => toggleSelect(pkg)}
+                      aria-label={`Remove ${pkg.name}`}
+                    >
+                      ✕
+                    </button>
+
+                    <div className="pc-pkg-cell-content">
+                      <h3 className="pc-pkg-cell-name">{pkg.name}</h3>
+                      <p className="pc-pkg-cell-loc">
+                        📍 {getDestinationLabel(pkg.destination)}
+                      </p>
+
+                      {badge ? (
+                        <span className={`pc-pill pc-pill-${badge.tone}`}>
+                          {badge.icon} {badge.label}
+                        </span>
+                      ) : (
+                        <span className="pc-pill pc-pill-gold">
+                          ⭐ {(pkg.ratings || 0).toFixed(1)} (
+                          {pkg.reviewCount ?? 0} reviews)
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {rows.map((row) => (
+                <Fragment key={row.label}>
+                  <div className="pc-feat-label">
+                    <span className="pc-feat-icon">{row.icon}</span>
+                    {row.label}
+                  </div>
+
+                  {selected.map((pkg) => (
+                    <div key={`${row.label}-${pkg._id}`} className="pc-feat-value">
+                      {row.render(pkg)}
+                    </div>
+                  ))}
+                </Fragment>
+              ))}
+            </div>
+
+            {recommendedPkg && (
+              <div className="pc-recommend-bar">
+                <div className="pc-recommend-item">
+                  <span className="pc-recommend-icon gold">🏅</span>
+                  <div>
+                    <p className="pc-recommend-title gold">Our Recommendation</p>
+                    <p className="pc-recommend-sub">
+                      Based on price, inclusions and overall value
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
 
-            {longestPkg && (
-              <div className="pc-stat-card">
-                <span className="pc-stat-icon blue">🕒</span>
-                <div>
-                  <p className="pc-stat-label">Longest trip</p>
-                  <p className="pc-stat-value">{longestPkg.name}</p>
-                  <p className="pc-stat-sub">{longestPkg.duration} days</p>
+                <div className="pc-recommend-item">
+                  <span className="pc-recommend-icon green">⭐</span>
+                  <div>
+                    <p className="pc-recommend-title green">
+                      {recommendedPkg.name}
+                    </p>
+                    <p className="pc-recommend-sub">
+                      Best value for money at ₹
+                      {recommendedPkg.price.toLocaleString("en-IN")}
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
           </div>
+        )}
 
-          <section className="pc-table-section">
-            <div className="pc-table-wrapper">
-              <table className="pc-table">
-                <thead>
-                  <tr>
-                    <th className="pc-th-label">Feature</th>
-
-                    {selected.map((pkg) => (
-                      <th key={pkg._id} className="pc-th-pkg">
-                        <img
-                          src={pkg.images?.[0] || pkg.image}
-                          alt={pkg.name}
-                          className="pc-th-img"
-                        />
-
-                        <span>{pkg.name}</span>
-
-                        <button
-                          className="pc-remove-btn"
-                          onClick={() => toggleSelect(pkg)}
-                        >
-                          ✕ Remove
-                        </button>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {rows.map((row) => (
-                    <tr key={row.label}>
-                      <td className="pc-td-label">
-                        <span className="pc-row-icon">{row.icon}</span>
-                        {row.label}
-                      </td>
-
-                      {selected.map((pkg) => (
-                        <td key={pkg._id} className="pc-td-val">
-                          {row.render(pkg)}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </>
-      )}
-
-      {selected.length === 1 && (
-        <p className="pc-hint">Select one more package to start comparing.</p>
-      )}
+        {selected.length === 1 && (
+          <p className="pc-hint">Select one more package to start comparing.</p>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useCompare } from "../context/CompareContext";
 import "./PackageComparison.css";
 
@@ -21,7 +21,6 @@ function Stars({ rating }) {
           ★
         </span>
       ))}
-      <span className="pc-rating-num">{safeRating.toFixed(1)}</span>
     </span>
   );
 }
@@ -77,19 +76,10 @@ const ComparePage = () => {
     ? Math.max(...ratedPackages.map((p) => p.avgRating))
     : null;
 
-  const longestDuration = packages.length
-    ? Math.max(...packages.map((p) => p.duration))
-    : null;
-
-  const cheapestPkg = packages.find((p) => p.price === lowestPrice);
-  const topRatedPkg = ratedPackages.find((p) => p.avgRating === highestRating);
-  const longestPkg = packages.find((p) => p.duration === longestDuration);
-
-  function getBadges(pkg) {
-    const badges = [];
-
+  // Primary badge shown on each package's image header (best value beats highest rated)
+  function getPrimaryBadge(pkg) {
     if (packages.length >= 2 && pkg.price === lowestPrice) {
-      badges.push({ label: "Best value", key: "value", tone: "green" });
+      return { label: "Best Value", tone: "green", icon: "🏅" };
     }
 
     if (
@@ -97,15 +87,17 @@ const ComparePage = () => {
       pkg.avgRating === highestRating &&
       (pkg.reviewCount ?? 0) > 0
     ) {
-      badges.push({ label: "Highest rated", key: "rated", tone: "gold" });
+      return { label: "Highest Rated", tone: "gold", icon: "🏆" };
     }
 
-    if (packages.length >= 2 && pkg.duration === longestDuration) {
-      badges.push({ label: "Longest trip", key: "longest", tone: "blue" });
-    }
-
-    return badges;
+    return null;
   }
+
+  // Package recommended in the footer bar: cheapest package overall
+  const recommendedPkg =
+    packages.length >= 2
+      ? packages.find((p) => p.price === lowestPrice)
+      : null;
 
   const rows = [
     {
@@ -120,28 +112,34 @@ const ComparePage = () => {
     },
     {
       label: "Price",
-      icon: "💰",
+      icon: "₹",
       render: (p) => (
-        <span className={p.price === lowestPrice ? "pc-best-value" : ""}>
+        <span style={p.price === lowestPrice ? { color: "var(--pc-green)", fontWeight: 700 } : undefined}>
           ₹{p.price.toLocaleString("en-IN")}
-          {p.price === lowestPrice && packages.length >= 2 && (
-            <span className="pc-badge">Best value</span>
-          )}
         </span>
       ),
     },
     {
       label: "Rating",
       icon: "⭐",
-      render: (p) => <Stars rating={p.avgRating} />,
+      render: (p) => (
+        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Stars rating={p.avgRating} />
+          <span className="pc-rating-num">
+            {(p.avgRating ?? 0).toFixed(1)} ({p.reviewCount ?? 0} reviews)
+          </span>
+        </span>
+      ),
     },
     {
       label: "Inclusions",
       icon: "✅",
       render: (p) => (
-        <ul className="pc-inclusions-list">
+        <ul className="pc-check-list">
           {(p.inclusions || []).map((inc, i) => (
-            <li key={i}>✓ {inc}</li>
+            <li key={i}>
+              <span className="pc-check-icon">✓</span> {inc}
+            </li>
           ))}
         </ul>
       ),
@@ -150,184 +148,171 @@ const ComparePage = () => {
       label: "Exclusions",
       icon: "❌",
       render: (p) => (
-        <ul className="pc-inclusions-list pc-exclusions-list">
+        <ul className="pc-check-list">
           {(p.exclusions || []).map((exc, i) => (
-            <li key={i}>✕ {exc}</li>
+            <li key={i}>
+              <span className="pc-x-icon">✕</span> {exc}
+            </li>
           ))}
         </ul>
       ),
     },
   ];
 
+  // Highlights row is only shown if at least one package actually has a description/highlight
+  const hasHighlights = packages.some((p) => p.highlights || p.description);
+
+  if (hasHighlights) {
+    rows.push({
+      label: "Highlights",
+      icon: "✨",
+      render: (p) => (
+        <div className="pc-highlight-box">
+          <span className="pc-highlight-icon">✨</span>
+          <span>{p.highlights || p.description}</span>
+        </div>
+      ),
+    });
+  }
+
   return (
     <div className="pc-page pt-32">
-      <div className="pc-header">
-        <span className="pc-eyebrow">Uncharted / Compare</span>
-        <h1>Compare packages</h1>
+      <div className="pc-container">
+        <div className="pc-hero-banner">
+          <div className="pc-hero-left">
+            <span className="pc-hero-icon">⚖️</span>
+            <div>
+              <h1 className="pc-hero-title">Compare Packages</h1>
+              <p className="pc-hero-subtitle">
+                Find the perfect package that matches your travel style and
+                budget.
+              </p>
+              {compareList.length > 0 && (
+                <span className="pc-hero-meta">
+                  <span className="pc-hero-meta-dot" />
+                  Comparing {compareList.length} package
+                  {compareList.length > 1 ? "s" : ""}
+                </span>
+              )}
+            </div>
+          </div>
 
-        <p className="pc-subtitle">
-          {compareList.length > 0
-            ? `Comparing ${compareList.length} package${
-                compareList.length > 1 ? "s" : ""
-              } side by side — price, rating, duration and what's included.`
-            : "Add packages to compare from the destinations page."}
-        </p>
+          {compareList.length > 0 && (
+            <button className="pc-hero-clear-btn" onClick={clearCompare}>
+              🗑 Clear All
+            </button>
+          )}
+        </div>
 
-        {compareList.length > 0 && (
-          <button className="pc-clear-all-btn" onClick={clearCompare}>
-            Clear all
-          </button>
+        {error && <div className="pc-error">{error}</div>}
+
+        {loading && <div className="pc-loading">Loading comparison…</div>}
+
+        {!loading && compareList.length === 0 && (
+          <p className="pc-hint">No packages selected.</p>
+        )}
+
+        {!loading && packages.length >= 2 && (
+          <div className="pc-compare-wrap">
+            <div
+              className="pc-compare-grid"
+              style={{ "--cols": packages.length }}
+            >
+              <div className="pc-feat-header">
+                <span className="pc-feat-header-label">Features</span>
+                <span className="pc-feat-divider">— ◇ —</span>
+              </div>
+
+              {packages.map((pkg) => {
+                const badge = getPrimaryBadge(pkg);
+
+                return (
+                  <div key={pkg._id} className="pc-pkg-cell">
+                    <img
+                      src={pkg.images?.[0]}
+                      alt={pkg.name}
+                      className="pc-pkg-cell-img"
+                    />
+                    <div className="pc-pkg-cell-overlay" />
+
+                    <button
+                      className="pc-pkg-cell-remove"
+                      onClick={() => removeFromCompare(pkg._id)}
+                      aria-label={`Remove ${pkg.name}`}
+                    >
+                      ✕
+                    </button>
+
+                    <div className="pc-pkg-cell-content">
+                      <h3 className="pc-pkg-cell-name">{pkg.name}</h3>
+                      <p className="pc-pkg-cell-loc">
+                        📍 {getDestinationLabel(pkg.destination)}
+                      </p>
+
+                      {badge ? (
+                        <span className={`pc-pill pc-pill-${badge.tone}`}>
+                          {badge.icon} {badge.label}
+                        </span>
+                      ) : (
+                        <span className="pc-pill pc-pill-gold">
+                          ⭐ {(pkg.avgRating ?? 0).toFixed(1)} (
+                          {pkg.reviewCount ?? 0} reviews)
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {rows.map((row) => (
+                <Fragment key={row.label}>
+                  <div className="pc-feat-label">
+                    <span className="pc-feat-icon">{row.icon}</span>
+                    {row.label}
+                  </div>
+
+                  {packages.map((pkg) => (
+                    <div key={`${row.label}-${pkg._id}`} className="pc-feat-value">
+                      {row.render(pkg)}
+                    </div>
+                  ))}
+                </Fragment>
+              ))}
+            </div>
+
+            {recommendedPkg && (
+              <div className="pc-recommend-bar">
+                <div className="pc-recommend-item">
+                  <span className="pc-recommend-icon gold">🏅</span>
+                  <div>
+                    <p className="pc-recommend-title gold">Our Recommendation</p>
+                    <p className="pc-recommend-sub">
+                      Based on price, inclusions and overall value
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pc-recommend-item">
+                  <span className="pc-recommend-icon green">⭐</span>
+                  <div>
+                    <p className="pc-recommend-title green">
+                      {recommendedPkg.name}
+                    </p>
+                    <p className="pc-recommend-sub">
+                      Best value for money at ₹
+                      {recommendedPkg.price.toLocaleString("en-IN")}
+                    </p>
+                  </div>
+                </div>
+
+                <a href="/destinations" className="pc-recommend-cta">
+                  View Packages →
+                </a>
+              </div>
+            )}
+          </div>
         )}
       </div>
-
-      {error && <div className="pc-error">{error}</div>}
-
-      {loading && <div className="pc-loading">Loading comparison…</div>}
-
-      {!loading && compareList.length === 0 && (
-        <p className="pc-hint">No packages selected.</p>
-      )}
-
-      {!loading && packages.length >= 2 && (
-        <>
-          <div className="pc-strip">
-            {packages.map((pkg, i) => (
-              <div
-                key={pkg._id}
-                className="pc-strip-card"
-                style={{ animationDelay: `${i * 0.05}s` }}
-              >
-                <div className="pc-strip-img-wrap">
-                  <img
-                    src={pkg.images?.[0]}
-                    alt={pkg.name}
-                    className="pc-strip-img"
-                  />
-                  <div className="pc-strip-img-overlay" />
-                  <button
-                    className="pc-strip-remove"
-                    onClick={() => removeFromCompare(pkg._id)}
-                  >
-                    ✕ Remove
-                  </button>
-                </div>
-
-                <div className="pc-strip-body">
-                  <h3 className="pc-strip-name">{pkg.name}</h3>
-                  <p className="pc-strip-meta">
-                    📍 {getDestinationLabel(pkg.destination)}
-                  </p>
-
-                  <div className="pc-strip-footer">
-                    <span className="pc-strip-price">
-                      ₹{pkg.price.toLocaleString("en-IN")}
-                    </span>
-                    <span className="pc-strip-days">{pkg.duration} days</span>
-                  </div>
-
-                  <div className="pc-strip-badges">
-                    {getBadges(pkg).map((badge) => (
-                      <span
-                        key={badge.key}
-                        className={`pc-pill pc-pill-${badge.tone}`}
-                      >
-                        {badge.label}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="pc-stats">
-            {cheapestPkg && (
-              <div className="pc-stat-card">
-                <span className="pc-stat-icon green">💰</span>
-                <div>
-                  <p className="pc-stat-label">Cheapest</p>
-                  <p className="pc-stat-value">{cheapestPkg.name}</p>
-                  <p className="pc-stat-sub">
-                    ₹{cheapestPkg.price.toLocaleString("en-IN")}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {topRatedPkg && (
-              <div className="pc-stat-card">
-                <span className="pc-stat-icon gold">⭐</span>
-                <div>
-                  <p className="pc-stat-label">Highest rated</p>
-                  <p className="pc-stat-value">{topRatedPkg.name}</p>
-                  <p className="pc-stat-sub">
-                    {topRatedPkg.avgRating.toFixed(1)} rating
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {longestPkg && (
-              <div className="pc-stat-card">
-                <span className="pc-stat-icon blue">🕒</span>
-                <div>
-                  <p className="pc-stat-label">Longest trip</p>
-                  <p className="pc-stat-value">{longestPkg.name}</p>
-                  <p className="pc-stat-sub">{longestPkg.duration} days</p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <section className="pc-table-section">
-            <div className="pc-table-wrapper">
-              <table className="pc-table">
-                <thead>
-                  <tr>
-                    <th className="pc-th-label">Feature</th>
-
-                    {packages.map((pkg) => (
-                      <th key={pkg._id} className="pc-th-pkg">
-                        <img
-                          src={pkg.images?.[0]}
-                          alt={pkg.name}
-                          className="pc-th-img"
-                        />
-
-                        <span>{pkg.name}</span>
-
-                        <button
-                          className="pc-remove-btn"
-                          onClick={() => removeFromCompare(pkg._id)}
-                        >
-                          ✕ Remove
-                        </button>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {rows.map((row) => (
-                    <tr key={row.label}>
-                      <td className="pc-td-label">
-                        <span className="pc-row-icon">{row.icon}</span>
-                        {row.label}
-                      </td>
-
-                      {packages.map((pkg) => (
-                        <td key={pkg._id} className="pc-td-val">
-                          {row.render(pkg)}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </>
-      )}
     </div>
   );
 };
