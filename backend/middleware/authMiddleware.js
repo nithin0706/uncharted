@@ -1,47 +1,25 @@
-const Wishlist = require("../models/Wishlist");
+const jwt = require("jsonwebtoken");
 
-const addToWishlist = async (req, res) => {
+const protect = (req, res, next) => {
   try {
-    const wishlist = await Wishlist.create({
-      userId: req.user.id,
-      packageId: req.body.packageId,
-    });
+    const authHeader = req.headers.authorization;
 
-    res.status(201).json({
-      message: "Added to wishlist",
-      wishlist,
-    });
+    if (!authHeader) {
+      return res.status(401).json({
+        message: "No token provided",
+      });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    req.user = decoded;
+
+    next();
   } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
-};
-
-const getWishlist = async (req, res) => {
-  try {
-    const wishlist = await Wishlist.find({
-      userId: req.user.id,
-    }).populate("packageId");
-
-    res.json(wishlist);
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
-};
-
-const removeFromWishlist = async (req, res) => {
-  try {
-    await Wishlist.findByIdAndDelete(req.params.id);
-
-    res.json({
-      message: "Removed from wishlist",
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
+    return res.status(401).json({
+      message: "Invalid token",
     });
   }
 };
@@ -52,6 +30,7 @@ const adminOnly = (req, res, next) => {
       message: "Admin access only",
     });
   }
+
   next();
 };
 

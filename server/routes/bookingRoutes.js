@@ -1,17 +1,23 @@
 const express = require("express");
-
 const router = express.Router();
 
-const authMiddleware = require("../middleware/authMiddleware");
+const { protect } = require("../middleware/authMiddleware");
 
 const {
-    createBooking,
-    getBookingById,
-    getBookingHistory,
-    cancelBooking
+  createBooking,
+  getBookingById,
+  getBookingHistory,
+  cancelBooking,
 } = require("../controllers/BookingController");
 
-router.post("/", authMiddleware, createBooking);
+console.log({
+  createBooking,
+  getBookingById,
+  getBookingHistory,
+  cancelBooking,
+});
+
+router.post("/", protect, createBooking);
 
 router.get("/history/:userId", getBookingHistory);
 
