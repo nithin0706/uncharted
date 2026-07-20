@@ -10,9 +10,7 @@ function getApi() {
   const token = localStorage.getItem("token");
   return axios.create({
     baseURL: API_BASE,
-    headers: {
-      Authorization: token ? `Bearer ${token}` : "",
-    },
+    headers: { Authorization: token ? `Bearer ${token}` : "" },
   });
 }
 
@@ -20,9 +18,7 @@ function getPackagesApi() {
   const token = localStorage.getItem("token");
   return axios.create({
     baseURL: PACKAGES_API_BASE,
-    headers: {
-      Authorization: token ? `Bearer ${token}` : "",
-    },
+    headers: { Authorization: token ? `Bearer ${token}` : "" },
   });
 }
 
@@ -30,23 +26,20 @@ function getDestinationsApi() {
   const token = localStorage.getItem("token");
   return axios.create({
     baseURL: DESTINATIONS_API_BASE,
-    headers: {
-      Authorization: token ? `Bearer ${token}` : "",
-    },
+    headers: { Authorization: token ? `Bearer ${token}` : "" },
   });
 }
 
 const EMPTY_PACKAGE_FORM = {
   name: "",
   destination: "",
-  duration: "",
+  duration: "",       // Number of days
   price: "",
-  itinerary: "",       // one line per day, joined into an array on submit
+  itinerary: "",       // one line per day: "Arrive and check in" -> day = line index + 1
   inclusions: "",       // comma-separated
   exclusions: "",       // comma-separated
   images: "",           // comma-separated URLs
-  travelStart: "",
-  travelEnd: "",
+  travelDates: "",       // comma-separated dates, e.g. 2026-09-01, 2026-09-08
 };
 
 function AdminDashboard() {
@@ -60,7 +53,6 @@ function AdminDashboard() {
   const [loadError, setLoadError] = useState("");
   const [actionError, setActionError] = useState("");
 
-  // Package form state
   const [showPackageForm, setShowPackageForm] = useState(false);
   const [editingPackageId, setEditingPackageId] = useState(null);
   const [packageForm, setPackageForm] = useState(EMPTY_PACKAGE_FORM);
@@ -90,8 +82,6 @@ function AdminDashboard() {
       setLoading(false);
     }
 
-    // Destinations are for the package form's dropdown only — don't let a
-    // failure here block the rest of the dashboard from loading.
     try {
       const destRes = await getDestinationsApi().get("/");
       setDestinations(destRes.data);
@@ -182,12 +172,19 @@ function AdminDashboard() {
       destination: pkg.destination?._id || pkg.destination || "",
       duration: pkg.duration ?? "",
       price: pkg.price ?? "",
-      itinerary: Array.isArray(pkg.itinerary) ? pkg.itinerary.join("\n") : (pkg.itinerary || ""),
-      inclusions: Array.isArray(pkg.inclusions) ? pkg.inclusions.join(", ") : (pkg.inclusions || ""),
-      exclusions: Array.isArray(pkg.exclusions) ? pkg.exclusions.join(", ") : (pkg.exclusions || ""),
-      images: Array.isArray(pkg.images) ? pkg.images.join(", ") : (pkg.images || ""),
-      travelStart: pkg.travelDates?.start ? pkg.travelDates.start.slice(0, 10) : "",
-      travelEnd: pkg.travelDates?.end ? pkg.travelDates.end.slice(0, 10) : "",
+      itinerary: Array.isArray(pkg.itinerary)
+        ? pkg.itinerary
+            .slice()
+            .sort((a, b) => a.day - b.day)
+            .map((step) => step.activity)
+            .join("\n")
+        : "",
+      inclusions: Array.isArray(pkg.inclusions) ? pkg.inclusions.join(", ") : "",
+      exclusions: Array.isArray(pkg.exclusions) ? pkg.exclusions.join(", ") : "",
+      images: Array.isArray(pkg.images) ? pkg.images.join(", ") : "",
+      travelDates: Array.isArray(pkg.travelDates)
+        ? pkg.travelDates.map((d) => new Date(d).toISOString().slice(0, 10)).join(", ")
+        : "",
     });
     setPackageFormError("");
     setShowPackageForm(true);
@@ -205,15 +202,20 @@ function AdminDashboard() {
   }
 
   function buildPackagePayload() {
+    const itineraryLines = packageForm.itinerary
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
     return {
       name: packageForm.name.trim(),
       destination: packageForm.destination,
-      duration: packageForm.duration,
+      duration: Number(packageForm.duration),
       price: Number(packageForm.price),
-      itinerary: packageForm.itinerary
-        .split("\n")
-        .map((s) => s.trim())
-        .filter(Boolean),
+      itinerary: itineraryLines.map((activity, i) => ({
+        day: i + 1,
+        activity,
+      })),
       inclusions: packageForm.inclusions
         .split(",")
         .map((s) => s.trim())
@@ -226,10 +228,10 @@ function AdminDashboard() {
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean),
-      travelDates: {
-        start: packageForm.travelStart || undefined,
-        end: packageForm.travelEnd || undefined,
-      },
+      travelDates: packageForm.travelDates
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
     };
   }
 
@@ -239,6 +241,10 @@ function AdminDashboard() {
 
     if (!packageForm.name.trim() || !packageForm.destination) {
       setPackageFormError("Name and destination are required.");
+      return;
+    }
+    if (!packageForm.duration || Number(packageForm.duration) <= 0) {
+      setPackageFormError("Duration must be a positive number of days.");
       return;
     }
 
@@ -289,22 +295,13 @@ function AdminDashboard() {
       <h1>Admin Dashboard</h1>
 
       <div className="admin-tabs">
-        <button
-          className={tab === "users" ? "tab active" : "tab"}
-          onClick={() => setTab("users")}
-        >
+        <button className={tab === "users" ? "tab active" : "tab"} onClick={() => setTab("users")}>
           User Management
         </button>
-        <button
-          className={tab === "reviews" ? "tab active" : "tab"}
-          onClick={() => setTab("reviews")}
-        >
+        <button className={tab === "reviews" ? "tab active" : "tab"} onClick={() => setTab("reviews")}>
           Review Moderation
         </button>
-        <button
-          className={tab === "packages" ? "tab active" : "tab"}
-          onClick={() => setTab("packages")}
-        >
+        <button className={tab === "packages" ? "tab active" : "tab"} onClick={() => setTab("packages")}>
           Packages
         </button>
       </div>
@@ -327,10 +324,7 @@ function AdminDashboard() {
                 <td>{u.name}</td>
                 <td>{u.email}</td>
                 <td>
-                  <button
-                    className="action-btn delete"
-                    onClick={() => handleDeleteUser(u._id)}
-                  >
+                  <button className="action-btn delete" onClick={() => handleDeleteUser(u._id)}>
                     Delete
                   </button>
                 </td>
@@ -377,10 +371,7 @@ function AdminDashboard() {
                   >
                     Reject
                   </button>
-                  <button
-                    className="action-btn delete"
-                    onClick={() => handleDeleteReview(r._id)}
-                  >
+                  <button className="action-btn delete" onClick={() => handleDeleteReview(r._id)}>
                     Delete
                   </button>
                 </td>
@@ -438,17 +429,20 @@ function AdminDashboard() {
               </label>
 
               <label>
-                Duration
+                Duration (number of days)
                 <input
-                  type="text"
-                  placeholder='e.g. "5 days / 4 nights"'
+                  type="number"
+                  min="1"
+                  step="1"
+                  placeholder="e.g. 5"
                   value={packageForm.duration}
                   onChange={(e) => handlePackageFieldChange("duration", e.target.value)}
+                  required
                 />
               </label>
 
               <label>
-                Price
+                Price (₹)
                 <input
                   type="number"
                   min="0"
@@ -459,9 +453,10 @@ function AdminDashboard() {
               </label>
 
               <label>
-                Itinerary (one line per day)
+                Itinerary — one line per day (day numbers are assigned automatically, in order)
                 <textarea
-                  rows={4}
+                  rows={5}
+                  placeholder={"Arrive in Jaisalmer, check into hotel\nVisit Jaisalmer Fort\nDesert safari and camel ride"}
                   value={packageForm.itinerary}
                   onChange={(e) => handlePackageFieldChange("itinerary", e.target.value)}
                 />
@@ -471,6 +466,7 @@ function AdminDashboard() {
                 Inclusions (comma-separated)
                 <input
                   type="text"
+                  placeholder="Hotel stay, Breakfast, Airport transfer"
                   value={packageForm.inclusions}
                   onChange={(e) => handlePackageFieldChange("inclusions", e.target.value)}
                 />
@@ -480,6 +476,7 @@ function AdminDashboard() {
                 Exclusions (comma-separated)
                 <input
                   type="text"
+                  placeholder="Flights, Personal expenses"
                   value={packageForm.exclusions}
                   onChange={(e) => handlePackageFieldChange("exclusions", e.target.value)}
                 />
@@ -494,24 +491,15 @@ function AdminDashboard() {
                 />
               </label>
 
-              <div className="travel-dates-row">
-                <label>
-                  Travel start
-                  <input
-                    type="date"
-                    value={packageForm.travelStart}
-                    onChange={(e) => handlePackageFieldChange("travelStart", e.target.value)}
-                  />
-                </label>
-                <label>
-                  Travel end
-                  <input
-                    type="date"
-                    value={packageForm.travelEnd}
-                    onChange={(e) => handlePackageFieldChange("travelEnd", e.target.value)}
-                  />
-                </label>
-              </div>
+              <label>
+                Available travel dates (comma-separated, YYYY-MM-DD)
+                <input
+                  type="text"
+                  placeholder="2026-09-01, 2026-09-08, 2026-09-15"
+                  value={packageForm.travelDates}
+                  onChange={(e) => handlePackageFieldChange("travelDates", e.target.value)}
+                />
+              </label>
 
               <div className="form-actions">
                 <button type="submit" className="action-btn approve" disabled={savingPackage}>
@@ -539,8 +527,8 @@ function AdminDashboard() {
                 <tr key={p._id}>
                   <td>{p.name}</td>
                   <td>{p.destination?.name || "Unknown"}</td>
-                  <td>{p.duration}</td>
-                  <td>{p.price}</td>
+                  <td>{p.duration} {p.duration === 1 ? "day" : "days"}</td>
+                  <td>₹{p.price?.toLocaleString("en-IN")}</td>
                   <td className="actions-cell">
                     <button className="action-btn" onClick={() => openEditPackageForm(p)}>
                       Edit
