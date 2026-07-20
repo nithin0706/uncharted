@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const protect = (req, res, next) => {
+const authMiddleware = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -24,6 +24,10 @@ const protect = (req, res, next) => {
   }
 };
 
-module.exports = {
-  protect,
-};
+// Support both:
+// const authMiddleware = require(...)
+// and
+// const { protect } = require(...)
+authMiddleware.protect = authMiddleware;
+
+module.exports = authMiddleware;
