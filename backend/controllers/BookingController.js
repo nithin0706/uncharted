@@ -1,5 +1,5 @@
 const Booking = require("../models/Booking");
-const Package = require("../models/Package"); // Matches case-sensitive paths exactly
+const Package = require("../models/package"); // Matches case-sensitive paths exactly
 
 const createBooking = async (req, res) => {
     try {
