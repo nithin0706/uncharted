@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const authMiddleware = (req, res, next) => {
+const protect = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -24,10 +24,17 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-// Support both:
-// const authMiddleware = require(...)
-// and
-// const { protect } = require(...)
-authMiddleware.protect = authMiddleware;
+const adminOnly = (req, res, next) => {
+  if (req.user && req.user.role === "admin") {
+    next();
+  } else {
+    return res.status(403).json({
+      message: "Admin access required",
+    });
+  }
+};
 
-module.exports = authMiddleware;
+module.exports = {
+  protect,
+  adminOnly,
+};
