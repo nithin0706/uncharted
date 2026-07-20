@@ -183,3 +183,80 @@
 .actions-cell {
   white-space: nowrap;
 }
+
+/* ---------- PACKAGES TAB / FORM ---------- */
+
+.packages-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.package-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #16161C;
+  border: 1px solid #25252d;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 0.5rem 0 1rem;
+  max-width: 700px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.package-form h3 {
+  margin: 0 0 0.25rem;
+  color: #E8C766;
+  font-family: serif;
+  font-size: 1.3rem;
+}
+
+.package-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: #9A958A;
+}
+
+.package-form input,
+.package-form select,
+.package-form textarea {
+  background: #000000;
+  border: 1px solid #25252d;
+  border-radius: 6px;
+  color: #F5F1E8;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.95rem;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+.package-form input:focus,
+.package-form select:focus,
+.package-form textarea:focus {
+  outline: none;
+  border-color: #C9A227;
+}
+
+.package-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.travel-dates-row {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.travel-dates-row label {
+  flex: 1;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
