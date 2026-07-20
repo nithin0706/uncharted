@@ -8,13 +8,14 @@ const {
     deletePackage,
     comparePackages,
 } = require("../controllers/packageController");
+const { protect } = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
 
-router.post("/", createPackage);
+router.post("/", protect, adminMiddleware, createPackage);
 router.get("/", getPackages);
-//router.get("/compare", comparePackages);   // must be before /:id
-router.get("/compare", comparePackages);
+router.get("/compare", comparePackages);   // must be before /:id
 router.get("/:id", getPackageById);
-router.put("/:id", updatePackage);
-router.delete("/:id", deletePackage);
+router.put("/:id", protect, adminMiddleware, updatePackage);
+router.delete("/:id", protect, adminMiddleware, deletePackage);
 
 module.exports = router;
