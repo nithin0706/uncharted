@@ -1,22 +1,5 @@
-const express = require("express");
-const router = express.Router();
-
-const authMiddleware = require("../middleware/authMiddleware");
-
-const {
-    addToWishlist,
-    getWishlist,
-    removeFromWishlist
-} = require("../controllers/wishlistController");
-
-router.post("/add", authMiddleware, addToWishlist);
-
-router.get("/", authMiddleware, getWishlist);
-
-router.delete("/remove/:id", authMiddleware, removeFromWishlist);
-
-module.exports = router;
 const dns = require("dns");
+
 dns.setDefaultResultOrder("ipv4first");
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
@@ -32,12 +15,14 @@ const reviewRoutes = require("./routes/reviewRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const authRoutes = require("./routes/authRoutes");
+const wishlistRoutes = require("./routes/wishlistRoutes");
 
 const app = express();
 
-// TEMPORARY: Allow all origins
+// CORS
 app.use(cors());
 
+// JSON parser
 app.use(express.json());
 
 // MongoDB Connection
@@ -56,12 +41,14 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/wishlist", wishlistRoutes);
 
 // Health Check
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
+// Server
 const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
